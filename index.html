@@ -61,22 +61,35 @@
   .kpi.ok b { color: var(--ok); } .kpi.warn b { color: var(--warn); } .kpi.bad b { color: var(--bad); }
 
   /* ===== faixa de contexto ===== */
-  .modo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; padding: 9px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-size: .85rem; line-height: 1.3; color: var(--muted); }
-  .modo:empty { display: none; }
-  .modo b { color: var(--ink); font-weight: 600; }
-  .modo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
-  .modo.hoje .dot { background: var(--ok); animation: pulso 1.8s ease-out infinite; }
-  .modo button { margin-left: auto; background: transparent; border: 1px solid var(--line-strong); border-radius: 8px; padding: 4px 10px; font-size: .78rem; cursor: pointer; }
-  @keyframes pulso { 0% { box-shadow: 0 0 0 0 rgba(61,220,151,.5); } 70%, 100% { box-shadow: 0 0 0 7px rgba(61,220,151,0); } }
   .meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px 14px; margin: 0 4px 10px; font-size: .8rem; color: var(--muted); }
   .periodo { margin: 0; }
   .legend { display: flex; gap: 12px; }
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
   .legend i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 
-  .banner { margin: 0 0 12px; padding: 12px 14px; border-radius: 12px; background: var(--bad-bg); border: 1px solid var(--bad-line); font-size: .92rem; font-weight: 500; }
-  .banner button { margin-left: 8px; background: transparent; border: 1px solid currentColor; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+
+  /* ===== alertas ===== */
+  .modo { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; padding: 11px 12px 11px 14px; border-radius: 14px; border: 1px solid var(--line-strong); border-left-width: 4px; line-height: 1.25; }
+  .modo:empty { display: none; }
+  .modo .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: currentColor; }
+  .modo .mtxt { flex: 1; min-width: 0; }
+  .modo .mtxt b { display: block; font-size: .98rem; font-weight: 600; color: var(--ink); }
+  .modo .mtxt small { display: block; margin-top: 2px; font-size: .76rem; color: var(--muted); overflow-wrap: anywhere; }
+  .modo .tag { flex: none; padding: 3px 10px; border-radius: 99px; font-size: .74rem; font-weight: 600; background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok-line); }
+  .modo.hoje { color: var(--ok); background: rgba(61,220,151,.09); border-color: var(--ok-line); border-left-color: var(--ok); }
+  .modo.hoje .dot { animation: pulso 1.8s ease-out infinite; }
+  .modo.hist { color: #7db2ff; background: rgba(79,140,255,.09); border-color: rgba(79,140,255,.4); border-left-color: var(--accent); }
+  .modo button { flex: none; padding: 9px 12px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; font-size: .82rem; font-weight: 600; cursor: pointer; }
+  @keyframes pulso { 0% { box-shadow: 0 0 0 0 rgba(61,220,151,.55); } 70%, 100% { box-shadow: 0 0 0 7px rgba(61,220,151,0); } }
+  .banner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin: 0 0 12px; padding: 12px 12px 12px 14px; border-radius: 14px; background: var(--bad-bg); border: 1px solid var(--bad-line); border-left-width: 4px; line-height: 1.3; }
+  .banner .bic { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--bad); color: #2a0709; font-size: .95rem; font-weight: 700; }
+  .banner .btxt { flex: 1 1 170px; min-width: 0; }
+  .banner .btxt b { display: block; font-size: .95rem; font-weight: 600; }
+  .banner .btxt span { display: block; margin-top: 2px; font-size: .84rem; color: #f5d0d3; }
+  .banner button { flex: none; padding: 9px 12px; border: 0; border-radius: 10px; background: var(--bad); color: #2a0709; font-size: .82rem; font-weight: 600; cursor: pointer; }
   .banner.info { background: var(--warn-bg); border-color: var(--warn-line); }
+  .banner.info .bic, .banner.info button { background: var(--warn); color: #2b1d00; }
+  .banner.info .btxt span { color: #f6e3b0; }
 
   /* ===== tabela ===== */
   .table { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
@@ -91,8 +104,8 @@
   .row { padding-block: 5px; cursor: pointer; border-top: 1px solid var(--line); transition: background .15s; }
   .row:first-child { border-top: 0; }
   .row:hover, .row:active { background: rgba(79,140,255,.07); }
-  .pill { min-height: 32px; display: grid; place-items: center; text-align: center; padding: 3px 4px; border-radius: 8px; word-break: break-word;
-    background: hsl(var(--h, 220) 60% 52% / .18); color: hsl(var(--h, 220) 90% 82%); font-size: .62rem; font-weight: 600; line-height: 1.15; }
+  .pill { min-height: 32px; display: grid; place-items: center; text-align: center; padding: 4px; border-radius: 8px; word-break: break-word;
+    background: var(--sc, #4a5a85); color: #fff; font-size: .6rem; font-weight: 700; line-height: 1.15; text-transform: uppercase; }
   .c { height: 34px; display: grid; place-items: center; border-radius: 8px; border: 1px solid transparent; font-size: .95rem; font-weight: 600; font-variant-numeric: tabular-nums; }
   .c.zero { color: var(--dim); font-weight: 400; }
   .c.red, .c.atencao { background: var(--bad-bg); border-color: var(--bad-line); color: var(--bad); }
@@ -365,8 +378,14 @@ function aviso(msg, tipo, retry) {
   const box = $('aviso');
   box.innerHTML = '';
   if (!msg) return;
-  const b = el('div', 'banner' + (tipo === 'info' ? ' info' : ''), msg);
+  const info = tipo === 'info';
+  const b = el('div', 'banner' + (info ? ' info' : ''));
   b.setAttribute('role', 'alert');
+  const ic = el('span', 'bic', info ? 'i' : '!'); ic.setAttribute('aria-hidden', 'true');
+  const t = el('div', 'btxt');
+  t.appendChild(el('b', '', info ? 'Aviso' : 'Erro'));
+  t.appendChild(el('span', '', msg));
+  b.appendChild(ic); b.appendChild(t);
   if (retry) { const bt = el('button', '', 'Tentar de novo'); bt.type = 'button'; bt.onclick = () => carregar(); b.appendChild(bt); }
   box.appendChild(b);
 }
@@ -459,34 +478,39 @@ function celula(valor, extra) {
 
 /* ----- cor por supervisor ----- */
 // Cada supervisor recebe um matiz próprio (distribuído pela lista ordenada), então as cores nunca se repetem.
-const MATIZES = [265, 160, 25, 200, 330, 50, 120, 0, 230, 90, 300, 180];
+// Cores fixas dos supervisores conhecidos; os demais recebem uma cor sólida própria.
+const COR_SUP = { 'william dantas': '#7030a0', 'marcos victor': '#ff6d01', 'jose leonardo': '#6fa8dc' };
+const MATIZES = [170, 330, 140, 200, 45, 350, 100, 290, 20, 215];
 function corSup(nome) {
-  const lista = ((state.dados && state.dados.supervisores) || []).slice().sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const fixa = COR_SUP[semAcento(nome).trim()];
+  if (fixa) return fixa;
+  const lista = ((state.dados && state.dados.supervisores) || []).filter(n => !COR_SUP[semAcento(n).trim()]).sort((x, y) => x.localeCompare(y, 'pt-BR'));
   let i = lista.indexOf(nome);
   if (i < 0) { let h = 0; for (const ch of String(nome || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; i = h; }
   const hue = i < MATIZES.length ? MATIZES[i] : (i * 137.5) % 360;
-  return Math.round(hue);
+  return 'hsl(' + Math.round(hue) + ' 58% 38%)';
 }
 
 /* ----- faixa que mostra a fonte dos dados ----- */
 function mostrarModo() {
   const m = $('modo'); m.innerHTML = '';
   const p = state.periodo;
-  const dot = el('span', 'dot');
+  const rot = { tudo: 'Todo o período', ontem: 'Ontem', ultimo: 'Último dia com dados', '7d': 'Últimos 7 dias', mes: 'Mês atual', custom: 'Período personalizado' };
+  const txt = el('div', 'mtxt');
+  m.appendChild(el('span', 'dot'));
   if (p === 'hoje') {
     m.className = 'modo hoje';
-    m.appendChild(dot);
-    const t = el('span'); t.appendChild(el('b', '', 'Produção de hoje')); t.appendChild(document.createTextNode(' · dados ao vivo da aba Encerramentos_Hoje'));
-    m.appendChild(t);
+    txt.appendChild(el('b', '', 'Produção de hoje'));
+    txt.appendChild(el('small', '', 'Dados ao vivo da aba Encerramentos_Hoje'));
+    m.appendChild(txt);
+    m.appendChild(el('span', 'tag', 'Ao vivo'));
     return;
   }
   m.className = 'modo hist';
-  m.appendChild(dot);
   const somaHoje = p !== 'ontem' && p !== 'ultimo';
-  const t = el('span');
-  t.appendChild(el('b', '', 'Filtro: ' + (({ tudo: 'todo o período', ontem: 'ontem', ultimo: 'último dia com dados', '7d': 'últimos 7 dias', mes: 'mês atual', custom: 'período personalizado' })[p] || p)));
-  t.appendChild(document.createTextNode(somaHoje ? ' · base Encerramentos + Encerramentos_Hoje' : ' · base Encerramentos'));
-  m.appendChild(t);
+  txt.appendChild(el('b', '', rot[p] || p));
+  txt.appendChild(el('small', '', somaHoje ? 'Base Encerramentos + Encerramentos_Hoje' : 'Base Encerramentos'));
+  m.appendChild(txt);
   const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
   b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
   m.appendChild(b);
@@ -525,7 +549,7 @@ function render() {
     r.tabIndex = 0; r.setAttribute('role', 'button');
     r.setAttribute('aria-label', t.nome + ': ' + t.concl + ' concluídos');
     const pl = el('div', 'pill', tc(t.supervisor) || '-');
-    pl.style.setProperty('--h', corSup(t.supervisor));
+    pl.style.setProperty('--sc', corSup(t.supervisor));
     r.appendChild(pl);
     r.appendChild(celula(t.reabInst, t.reabInst > 0 ? 'red' : ''));
     r.appendChild(celula(t.reabPend, t.reabPend > 0 ? 'red' : ''));
