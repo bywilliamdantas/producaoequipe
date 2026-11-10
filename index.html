@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050d1f">
+<title>Desempenho da Equipe</title>
+<style>
+  :root {
+    --bg1: #040b1c; --bg2: #0a1d42;
+    --panel: #0b1a38; --panel2: #0e2147;
+    --line: #1d3d78; --line2: #16305f;
+    --ink: #eaf1ff; --muted: #8ea5cc; --dim: #4f6590;
+    --cell: #091530;
+    --blue: #1e6bff;
+    --green: #12994a; --green-bg: #0b3b24; --green-line: #16a34a;
+    --yellow: #e5b10a; --yellow-bg: #5b4300; --yellow-line: #f2b705;
+    --red: #cf1f27; --red-bg: #4a0f18; --red-line: #c81e2b;
+    --purple: #5326cc; --purple2: #431db0;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; color: var(--ink); font: 16px/1.4 var(--font);
+    background: radial-gradient(1200px 600px at 50% -10%, #12306a 0%, transparent 60%), linear-gradient(180deg, var(--bg2), var(--bg1) 70%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 14px) 14px calc(env(safe-area-inset-bottom, 0px) + 110px); }
+
+  /* ===== topo ===== */
+  .top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .icon-btn {
+    width: 46px; height: 46px; flex: none; display: grid; place-items: center; cursor: pointer;
+    background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-radius: 12px;
+  }
+  .icon-btn svg { width: 24px; height: 24px; }
+  .brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .brand svg { width: 38px; height: 38px; flex: none; color: #cfe0ff; }
+  .brand h1 { margin: 0; font-size: clamp(1.15rem, 5vw, 1.55rem); line-height: 1.1; }
+  .brand p { margin: 2px 0 0; color: var(--muted); font-size: .92rem; }
+  .stamp {
+    flex: none; display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+    background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-radius: 16px;
+    font-size: .74rem; color: var(--muted); line-height: 1.25; max-width: 150px;
+  }
+  .stamp svg { width: 26px; height: 26px; flex: none; color: var(--ink); }
+  .stamp b { display: block; color: var(--ink); font-size: .85rem; font-weight: 600; }
+
+  /* ===== busca e filtro ===== */
+  .tools { display: flex; gap: 10px; margin-bottom: 12px; }
+  .search {
+    flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 14px; height: 50px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  }
+  .search svg { width: 22px; height: 22px; color: var(--muted); flex: none; }
+  .search input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; }
+  .search input::placeholder { color: #6f88b4; }
+  .filter-btn {
+    flex: none; height: 50px; padding: 0 14px; display: flex; align-items: center; gap: 8px; cursor: pointer;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; position: relative;
+  }
+  .filter-btn svg { width: 22px; height: 22px; }
+  .filter-btn.on::after { content: ""; position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--yellow); }
+  :focus-visible { outline: 3px solid #7db2ff; outline-offset: 2px; }
+
+  .legend {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 18px; width: fit-content; max-width: 100%;
+    margin: 0 auto 8px; padding: 9px 18px; background: var(--panel); border: 1px solid var(--line2); border-radius: 12px; font-size: .9rem;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend i { width: 18px; height: 18px; border-radius: 4px; display: inline-block; }
+  .periodo { text-align: center; color: var(--muted); font-size: .85rem; margin: 0 0 10px; min-height: 1.2em; }
+
+  /* ===== tabela ===== */
+  .table { background: linear-gradient(180deg, #0a1832, #081329); border: 1px solid var(--line); border-radius: 14px; }
+  .grid {
+    display: grid; align-items: center; gap: 5px; padding: 0 5px;
+    grid-template-columns: minmax(76px, 1.55fr) repeat(5, minmax(30px, .62fr)) minmax(94px, 2fr);
+  }
+  .thead {
+    position: sticky; top: 0; z-index: 4; padding-top: 4px; padding-bottom: 4px; min-height: 54px;
+    background: linear-gradient(180deg, #123877, #0e2a5c); border-bottom: 1px solid var(--line);
+    border-radius: 13px 13px 0 0; font-size: .7rem; font-weight: 600; text-align: center; line-height: 1.15;
+  }
+  .thead .sup { display: flex; align-items: center; gap: 6px; font-size: .8rem; justify-content: flex-start; padding-left: 6px; }
+  .thead .sup svg { width: 22px; height: 22px; flex: none; }
+  .thead .tec { font-size: .85rem; }
+  .rows { padding: 5px 0; }
+  .row { padding-top: 2px; padding-bottom: 2px; cursor: pointer; border-radius: 8px; }
+  .row:hover { background: rgba(80,130,255,.06); }
+  .pill {
+    min-height: 36px; display: grid; place-items: center; text-align: center; padding: 3px 4px; border-radius: 7px;
+    background: linear-gradient(180deg, var(--purple), var(--purple2)); font-size: .68rem; font-weight: 700; line-height: 1.1; text-transform: uppercase;
+    word-break: break-word;
+  }
+  .c {
+    height: 36px; display: grid; place-items: center; border-radius: 7px; background: var(--cell);
+    font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums;
+  }
+  .c.zero { color: var(--dim); font-weight: 600; }
+  .c.red { background: var(--red); }
+  .c.normal { background: var(--green); }
+  .c.obs { background: var(--yellow); color: #1b1400; }
+  .c.atencao { background: var(--red); }
+  .nome { font-size: .68rem; text-transform: uppercase; line-height: 1.15; padding-left: 4px; word-break: break-word; }
+  .nome small { display: block; color: var(--yellow); font-size: .6rem; text-transform: none; }
+  .vazio { padding: 28px 16px; text-align: center; color: var(--muted); }
+  .skel { height: 36px; margin: 7px 5px; border-radius: 8px; background: linear-gradient(90deg, #0c1c3d 25%, #12295a 50%, #0c1c3d 75%); background-size: 200% 100%; animation: sh 1.2s linear infinite; }
+  @keyframes sh { to { background-position: -200% 0; } }
+
+  /* ===== cartões ===== */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 14px; }
+  .card {
+    display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px 10px; border-radius: 12px; border: 1.5px solid;
+  }
+  .card .ci { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+  .card .ci svg { width: 30px; height: 30px; }
+  .card .t { text-align: center; line-height: 1.1; }
+  .card .t b { display: block; font-size: 2rem; font-variant-numeric: tabular-nums; }
+  .card .t span { font-size: 1rem; }
+  .card.az { background: linear-gradient(180deg, #0d2d6b, #0a2250); border-color: #2459c6; }
+  .card.az .ci { background: var(--blue); }
+  .card.vd { background: linear-gradient(180deg, #0d3a22, #09301b); border-color: var(--green-line); }
+  .card.vd .ci { background: #17c04f; }
+  .card.am { background: linear-gradient(180deg, #6b4c00, #523a00); border-color: var(--yellow-line); }
+  .card.am .ci { background: transparent; color: #ffc61a; }
+  .card.vm { background: linear-gradient(180deg, #55101b, #430b15); border-color: var(--red-line); }
+  .card.vm .ci { background: #e5222f; }
+
+  .more {
+    width: 100%; height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; color: #cfe0ff;
+  }
+  .more svg { width: 22px; height: 22px; transition: transform .2s; }
+  .more[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .details { margin-top: 10px; padding: 14px; background: var(--panel); border: 1px solid var(--line2); border-radius: 14px; }
+  .dgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+  .dgrid div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed var(--line2); padding-bottom: 6px; font-size: .92rem; }
+  .dgrid span { color: var(--muted); }
+  .dgrid b { font-variant-numeric: tabular-nums; }
+
+  .fab {
+    position: fixed; right: max(16px, calc(50% - 344px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+    width: 62px; height: 62px; border-radius: 50%; border: 0; cursor: pointer; background: var(--blue);
+    display: grid; place-items: center; box-shadow: 0 8px 22px rgba(0,0,0,.5); z-index: 10;
+  }
+  .fab svg { width: 32px; height: 32px; }
+  .fab.load svg { animation: rot .9s linear infinite; }
+  @keyframes rot { to { transform: rotate(360deg); } }
+
+  .banner { margin: 0 0 12px; padding: 12px 14px; border-radius: 12px; background: var(--red-bg); border: 1px solid var(--red-line); font-weight: 600; }
+  .banner button { margin-left: 8px; background: transparent; border: 1px solid currentColor; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  .banner.info { background: var(--yellow-bg); border-color: var(--yellow-line); }
+
+  /* ===== janelas ===== */
+  dialog { border: 1px solid var(--line); border-radius: 18px; background: #0b1a38; color: var(--ink); padding: 0; width: min(440px, calc(100% - 28px)); }
+  dialog::backdrop { background: rgba(2, 6, 18, .72); }
+  .dlg { padding: 20px; }
+  .dlg h2 { margin: 0 0 4px; font-size: 1.15rem; }
+  .dlg .sub { color: var(--muted); margin: 0 0 14px; font-size: .92rem; }
+  .dlg label { display: block; margin: 12px 0 5px; font-weight: 600; font-size: .92rem; }
+  .ctl { width: 100%; height: 46px; padding: 0 12px; background: var(--cell); border: 1px solid var(--line); border-radius: 10px; }
+  .dlg .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn { flex: 1; height: 46px; border-radius: 10px; border: 1px solid var(--line); background: transparent; cursor: pointer; font-weight: 600; }
+  .btn.pri { background: var(--blue); border-color: var(--blue); }
+  .menu-item { display: block; width: 100%; text-align: left; padding: 14px 4px; background: none; border: 0; border-bottom: 1px solid var(--line2); cursor: pointer; font-weight: 600; }
+  .chip { display: inline-block; padding: 2px 12px; border-radius: 99px; font-size: .85rem; font-weight: 700; }
+  .chip.normal { background: var(--green-bg); color: #5be08e; }
+  .chip.obs { background: var(--yellow-bg); color: #ffd35a; }
+  .chip.atencao { background: var(--red-bg); color: #ff8b92; }
+  dl.det { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; margin: 14px 0 0; }
+  dl.det dt { color: var(--muted); }
+  dl.det dd { margin: 0; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+  .how { margin: 12px 0 0; padding: 12px; background: var(--cell); border-radius: 10px; font-size: .88rem; color: #c3d3f0; }
+  .how p { margin: 0 0 8px; }
+  .how p:last-child { margin: 0; }
+
+  @media (max-width: 380px) {
+    .stamp { display: none; }
+    .nome, .pill { font-size: .62rem; }
+    .c { font-size: .95rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .fab.load svg, .skel { animation: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <button class="icon-btn" id="menuBtn" aria-label="Abrir menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div class="brand">
+      <svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><rect x="5" y="28" width="8" height="14" rx="1.5"/><rect x="17" y="21" width="8" height="21" rx="1.5"/><rect x="29" y="14" width="8" height="28" rx="1.5"/><path d="M6 18l12-9 8 6 14-10" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M33 5h8v8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>
+        <h1 id="titulo">Desempenho da Equipe</h1>
+        <p id="subtitulo">Supervisor de Operações</p>
+      </div>
+    </div>
+    <div class="stamp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+      <div>Atualizado em<b id="atual">--</b></div>
+    </div>
+  </div>
+
+  <div class="tools">
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="busca" type="search" placeholder="Pesquisar técnico..." autocomplete="off" aria-label="Pesquisar técnico">
+    </label>
+    <button class="filter-btn" id="filtroBtn" aria-label="Abrir filtros">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:18px;height:18px"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+  </div>
+
+  <div class="legend" aria-label="Legenda">
+    <span><i style="background:var(--red)"></i>Atenção</span>
+    <span><i style="background:var(--yellow)"></i>Observação</span>
+    <span><i style="background:var(--green)"></i>Normal</span>
+  </div>
+  <p class="periodo" id="periodo"></p>
+
+  <div id="aviso"></div>
+
+  <div class="table">
+    <div class="grid thead" role="row">
+      <div class="sup"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7.5 8-7.5s8 3.100 8 7.500z"/></svg>Supervisor</div>
+      <div>Reab.<br>Inst.</div>
+      <div>Reab.<br>Pend.</div>
+      <div>Instalação</div>
+      <div>Pendência</div>
+      <div>Concluídos</div>
+      <div class="tec">Técnico</div>
+    </div>
+    <div class="rows" id="rows" aria-live="polite"></div>
+  </div>
+
+  <div class="cards">
+    <div class="card az"><div class="ci"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><circle cx="5.2" cy="9.6" r="2.4"/><circle cx="18.8" cy="9.6" r="2.4"/><path d="M6.500 20c0-3.300 2.400-5.800 5.500-5.800s5.500 2.500 5.500 5.800z"/><path d="M1.500 18.500c0-2.400 1.600-4.300 3.700-4.300.9 0 1.600.2 2.200.7-1.300 1-2.100 2.400-2.300 3.600zM22.500 18.500c0-2.400-1.600-4.300-3.700-4.300-.9 0-1.600.2-2.200.7 1.300 1 2.100 2.400 2.300 3.600z"/></svg></div><div class="t"><b id="kTec">0</b><span>Técnicos</span></div></div>
+    <div class="card vd"><div class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg></div><div class="t"><b id="kConcl">0</b><span>Concluídos</span></div></div>
+    <div class="card am"><div class="ci"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.500L1.500 21h21zM11 9h2v6h-2zm0 8h2v2h-2z" fill-rule="evenodd"/></svg></div><div class="t"><b id="kPend">0</b><span>Pendências</span></div></div>
+    <div class="card vm"><div class="ci"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M11 5h2v9h-2zm0 11h2v2.500h-2z"/></svg></div><div class="t"><b id="kReabP">0</b><span>Reab. Pend.</span></div></div>
+  </div>
+
+  <button class="more" id="maisBtn" aria-expanded="false" aria-controls="detalhes">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
+    Mais detalhes
+  </button>
+  <div class="details" id="detalhes" hidden><div class="dgrid" id="dgrid"></div></div>
+</div>
+
+<button class="fab" id="fab" aria-label="Atualizar dados">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.500-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.500 4M20 20v-4h-4"/></svg>
+</button>
+
+<!-- Filtros -->
+<dialog id="dlgFiltro"><form method="dialog" class="dlg" id="fForm">
+  <h2>Filtros</h2><p class="sub">Escolha o período e como ordenar.</p>
+  <label for="fPeriodo">Período</label>
+  <select id="fPeriodo" class="ctl">
+    <option value="ultimo">Último dia com dados</option>
+    <option value="hoje">Hoje</option>
+    <option value="ontem">Ontem</option>
+    <option value="7d">Últimos 7 dias</option>
+    <option value="mes">Mês atual</option>
+    <option value="tudo">Todo o período da base</option>
+    <option value="custom">Personalizado</option>
+  </select>
+  <div id="fCustom" hidden>
+    <label for="fIni">De</label><input id="fIni" type="date" class="ctl">
+    <label for="fFim">Até</label><input id="fFim" type="date" class="ctl">
+  </div>
+  <label for="fSup">Supervisor</label>
+  <select id="fSup" class="ctl"><option value="">Todos</option></select>
+  <label for="fOrd">Ordenar por</label>
+  <select id="fOrd" class="ctl">
+    <option value="concl">Mais concluídos</option>
+    <option value="atencao">Atenção primeiro</option>
+    <option value="reab">Mais reaberturas</option>
+    <option value="nome">Nome (A a Z)</option>
+  </select>
+  <div class="actions">
+    <button type="button" class="btn" id="fLimpar">Limpar</button>
+    <button type="submit" class="btn pri" value="ok">Aplicar</button>
+  </div>
+</form></dialog>
+
+<!-- Detalhe do técnico -->
+<dialog id="dlgTec"><div class="dlg">
+  <h2 id="tNome"></h2><p class="sub" id="tSup"></p><span class="chip" id="tChip"></span>
+  <dl class="det" id="tDet"></dl>
+  <div class="actions"><button type="button" class="btn pri" id="tFechar">Fechar</button></div>
+</div></dialog>
+
+<!-- Menu -->
+<dialog id="dlgMenu"><div class="dlg">
+  <h2>Menu</h2><p class="sub">Painel de desempenho da equipe</p>
+  <button class="menu-item" id="mAtualizar">Atualizar agora</button>
+  <button class="menu-item" id="mCodigo">Informar código de acesso</button>
+  <button class="menu-item" id="mComo" aria-expanded="false">Como os números são calculados</button>
+  <div class="how" id="how" hidden>
+    <p><b>Concluídos:</b> OS com status Encerramento e data de conclusão dentro do período.</p>
+    <p><b>Instalação e Pendência:</b> dividem os concluídos pelo tipo da solicitação. Os demais tipos (transferência, serviço etc.) entram em Concluídos e em "Outros tipos".</p>
+    <p><b>Reab.:</b> conclusões marcadas como reabertura ou retrabalho, separadas em instalação e pendência.</p>
+    <p><b>Cores:</b> comparam os concluídos do técnico com a meta por dia multiplicada pelos dias do período.</p>
+  </div>
+  <div class="actions"><button type="button" class="btn pri" id="mFechar">Fechar</button></div>
+</div></dialog>
+
+<!-- Código de acesso -->
+<dialog id="dlgCodigo"><form method="dialog" class="dlg" id="cForm">
+  <h2>Código de acesso</h2><p class="sub" id="cMsg">Digite o código para ver o painel.</p>
+  <label for="cInput" class="sr" style="position:absolute;left:-9999px">Código</label>
+  <input id="cInput" class="ctl" type="password" autocomplete="off" placeholder="Código">
+  <div class="actions"><button type="submit" class="btn pri" value="ok">Entrar</button></div>
+</form></dialog>
+
+<script>
+/* ============ CONFIGURAÇÃO ============ */
+// URL do app da web (termina em /exec), gerada ao implantar o Apps Script
+const URL_PADRAO = 'COLE_AQUI_A_URL_DO_APPS_SCRIPT';
+// Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
+const URL_CSV = 'COLE_AQUI_O_LINK_CSV_DA_ABA_URL';
+// Atualização automática (minutos)
+const AUTO_MIN = 5;
+/* ====================================== */
+
+const $ = id => document.getElementById(id);
+const store = {
+  get(k, fb) { try { const v = localStorage.getItem(k); return v === null ? fb : JSON.parse(v); } catch (_) { return fb; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
+};
+const K = { filtros: 'dp_filtros', codigo: 'dp_codigo', url: 'dp_url' };
+
+let SCRIPT_URL = URL_PADRAO;
+const urlValida = u => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
+
+const state = Object.assign(
+  { periodo: 'ultimo', ini: '', fim: '', supervisor: '', ordem: 'concl' },
+  store.get(K.filtros, {})
+);
+state.busca = '';
+state.codigo = store.get(K.codigo, '');
+state.dados = null;
+state.ultimaCarga = 0;
+let carregando = false;
+
+/* ----- utilidades ----- */
+const semAcento = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+async function pedir(url, ms) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), ms || 45000);
+  try { const r = await fetch(url, { signal: ctl.signal, cache: 'no-store' }); return await r.json(); }
+  finally { clearTimeout(t); }
+}
+
+async function resolverUrl() {
+  if (!URL_CSV.startsWith('https://')) { if (urlValida(URL_PADRAO)) SCRIPT_URL = URL_PADRAO; return; }
+  try {
+    const r = await fetch(URL_CSV + (URL_CSV.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' });
+    const linha = (await r.text()).split('\n')[1] || '';
+    const u = linha.split(',')[0].split('"').join('').trim();
+    if (urlValida(u)) { SCRIPT_URL = u; store.set(K.url, u); return; }
+  } catch (_) {}
+  const salvo = store.get(K.url, '');
+  if (urlValida(salvo)) SCRIPT_URL = salvo;
+}
+
+/* ----- aviso ----- */
+function aviso(msg, tipo, retry) {
+  const box = $('aviso');
+  box.innerHTML = '';
+  if (!msg) return;
+  const b = el('div', 'banner' + (tipo === 'info' ? ' info' : ''), msg);
+  b.setAttribute('role', 'alert');
+  if (retry) { const bt = el('button', '', 'Tentar de novo'); bt.type = 'button'; bt.onclick = () => carregar(); b.appendChild(bt); }
+  box.appendChild(b);
+}
+
+/* ----- carregamento ----- */
+function esqueleto() {
+  const r = $('rows'); r.innerHTML = '';
+  for (let i = 0; i < 8; i++) r.appendChild(el('div', 'skel'));
+}
+
+async function carregar() {
+  if (carregando) return;
+  carregando = true;
+  $('fab').classList.add('load');
+  if (!state.dados) esqueleto();
+  aviso('');
+
+  await resolverUrl();
+  if (!urlValida(SCRIPT_URL)) {
+    carregando = false; $('fab').classList.remove('load');
+    $('rows').innerHTML = '';
+    aviso('Falta configurar a URL do Apps Script no arquivo index.html.');
+    return;
+  }
+
+  const q = new URLSearchParams({ periodo: state.periodo });
+  if (state.periodo === 'custom' && state.ini && state.fim) { q.set('ini', state.ini); q.set('fim', state.fim); }
+  if (state.codigo) q.set('codigo', state.codigo);
+
+  try {
+    const j = await pedir(SCRIPT_URL + '?' + q.toString());
+    if (j && j.auth) { carregando = false; $('fab').classList.remove('load'); pedirCodigo(j.error); return; }
+    if (!j || !j.ok) throw new Error((j && j.error) || 'Resposta inválida.');
+    state.dados = j;
+    state.ultimaCarga = Date.now();
+    render();
+  } catch (e) {
+    $('rows').innerHTML = state.dados ? $('rows').innerHTML : '';
+    const abortou = e && e.name === 'AbortError';
+    aviso(abortou ? 'A conexão demorou demais.'
+      : (e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Não foi possível carregar os dados.'),
+      'erro', true);
+  } finally {
+    carregando = false;
+    $('fab').classList.remove('load');
+  }
+}
+
+/* ----- código de acesso ----- */
+function pedirCodigo(msg) {
+  $('cMsg').textContent = msg || 'Digite o código para ver o painel.';
+  $('cInput').value = '';
+  const d = $('dlgCodigo');
+  if (!d.open) d.showModal();
+  setTimeout(() => $('cInput').focus(), 50);
+}
+$('cForm').addEventListener('submit', () => {
+  state.codigo = $('cInput').value.trim();
+  store.set(K.codigo, state.codigo);
+  setTimeout(carregar, 0);
+});
+
+/* ----- cálculo do que aparece ----- */
+function listaVisivel() {
+  const d = state.dados; if (!d) return [];
+  const b = semAcento(state.busca).trim();
+  let l = d.tecnicos.filter(t =>
+    (!b || semAcento(t.nome).includes(b)) && (!state.supervisor || t.supervisor === state.supervisor));
+  const ordNivel = { atencao: 0, obs: 1, normal: 2 };
+  const nm = (a, c) => a.nome.localeCompare(c.nome, 'pt-BR');
+  const o = state.ordem;
+  l = l.slice().sort((a, c) =>
+    o === 'nome' ? nm(a, c) :
+    o === 'atencao' ? (ordNivel[a.nivel] - ordNivel[c.nivel]) || (a.concl - c.concl) || nm(a, c) :
+    o === 'reab' ? ((c.reabInst + c.reabPend) - (a.reabInst + a.reabPend)) || (c.concl - a.concl) || nm(a, c) :
+    (c.concl - a.concl) || nm(a, c));
+  return l;
+}
+
+function celula(valor, extra) {
+  const c = el('div', 'c' + (extra ? ' ' + extra : '') + (valor === 0 && !extra ? ' zero' : ''), String(valor));
+  return c;
+}
+
+/* ----- desenho ----- */
+function render() {
+  const d = state.dados; if (!d) return;
+  $('titulo').textContent = d.titulo || 'Desempenho da Equipe';
+  $('subtitulo').textContent = d.subtitulo || '';
+  document.title = d.titulo || 'Desempenho da Equipe';
+  $('atual').textContent = d.atualizado || '--';
+  $('periodo').textContent = d.periodo
+    ? (d.periodo.ini === d.periodo.fim ? d.periodo.rotulo : d.periodo.rotulo + ' (' + d.periodo.iniBR + ' a ' + d.periodo.fimBR + ')')
+    : '';
+
+  // supervisores no filtro
+  const sel = $('fSup'); const atual = state.supervisor;
+  sel.innerHTML = '<option value="">Todos</option>';
+  (d.supervisores || []).forEach(s => { const o = el('option', '', s); o.value = s; sel.appendChild(o); });
+  sel.value = (d.supervisores || []).includes(atual) ? atual : '';
+  if (sel.value !== atual) state.supervisor = '';
+
+  if (d.baseVazia) aviso('A aba Encerramentos ainda não tem dados. Importe o relatório de encerrados.', 'info');
+  else aviso('');
+
+  const lista = listaVisivel();
+  const rows = $('rows'); rows.innerHTML = '';
+  if (!lista.length) {
+    rows.appendChild(el('div', 'vazio', state.busca || state.supervisor ? 'Nenhum técnico encontrado.' : 'Nenhum técnico cadastrado.'));
+  }
+  lista.forEach(t => {
+    const r = el('div', 'grid row');
+    r.tabIndex = 0; r.setAttribute('role', 'button');
+    r.setAttribute('aria-label', t.nome + ': ' + t.concl + ' concluídos');
+    r.appendChild(el('div', 'pill', t.supervisor || '-'));
+    r.appendChild(celula(t.reabInst, t.reabInst > 0 ? 'red' : ''));
+    r.appendChild(celula(t.reabPend, t.reabPend > 0 ? 'red' : ''));
+    r.appendChild(celula(t.inst));
+    r.appendChild(celula(t.pend));
+    r.appendChild(celula(t.concl, t.nivel));
+    const n = el('div', 'nome', t.nome);
+    if (t.semBase) n.appendChild(el('small', '', 'nome não aparece na base'));
+    r.appendChild(n);
+    const abrir = () => abrirTecnico(t);
+    r.addEventListener('click', abrir);
+    r.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); } });
+    rows.appendChild(r);
+  });
+
+  // cartões e detalhes (seguem busca e filtro)
+  const s = lista.reduce((a, t) => {
+    a.concl += t.concl; a.inst += t.inst; a.pend += t.pend; a.outros += t.outros;
+    a.reabI += t.reabInst; a.reabP += t.reabPend; a.reabO += t.reabOutros;
+    a.canc += t.cancel; a.atraso += t.atraso;
+    a[t.nivel]++; return a;
+  }, { concl: 0, inst: 0, pend: 0, outros: 0, reabI: 0, reabP: 0, reabO: 0, canc: 0, atraso: 0, atencao: 0, obs: 0, normal: 0 });
+
+  $('kTec').textContent = lista.length;
+  $('kConcl').textContent = s.concl;
+  $('kPend').textContent = s.pend;
+  $('kReabP').textContent = s.reabP;
+
+  const dg = $('dgrid'); dg.innerHTML = '';
+  const itens = [
+    ['Instalação', s.inst], ['Reab. Inst.', s.reabI], ['Outros tipos', s.outros], ['Reab. outros', s.reabO],
+    ['Cancelados', s.canc], ['Em atraso (SLA)', s.atraso],
+    ['Em atenção', s.atencao], ['Em observação', s.obs], ['Normal', s.normal],
+    ['Média por técnico', lista.length ? (s.concl / lista.length).toFixed(1).replace('.', ',') : '0'],
+    ['Meta Normal (período)', d.metas ? String(d.metas.normal).replace('.', ',') : '-'],
+    ['Meta Observação (período)', d.metas ? String(d.metas.obs).replace('.', ',') : '-']
+  ];
+  itens.forEach(([k, v]) => { const x = el('div'); x.appendChild(el('span', '', k)); x.appendChild(el('b', '', String(v))); dg.appendChild(x); });
+
+  $('filtroBtn').classList.toggle('on', state.periodo !== 'ultimo' || !!state.supervisor || state.ordem !== 'concl');
+}
+
+/* ----- detalhe do técnico ----- */
+function abrirTecnico(t) {
+  $('tNome').textContent = t.nome;
+  $('tSup').textContent = t.supervisor ? 'Supervisor: ' + t.supervisor : '';
+  const ch = $('tChip');
+  ch.className = 'chip ' + t.nivel;
+  ch.textContent = t.nivel === 'normal' ? 'Normal' : t.nivel === 'obs' ? 'Observação' : 'Atenção';
+  const dl = $('tDet'); dl.innerHTML = '';
+  [['Concluídos', t.concl], ['Instalação', t.inst], ['Pendência', t.pend], ['Outros tipos', t.outros],
+   ['Reab. Instalação', t.reabInst], ['Reab. Pendência', t.reabPend], ['Reab. outros', t.reabOutros],
+   ['Cancelados', t.cancel], ['Concluídos em atraso', t.atraso]]
+    .forEach(([k, v]) => { dl.appendChild(el('dt', '', k)); dl.appendChild(el('dd', '', String(v))); });
+  if (state.dados && state.dados.metas) {
+    dl.appendChild(el('dt', '', 'Meta Normal / Observação'));
+    dl.appendChild(el('dd', '', String(state.dados.metas.normal).replace('.', ',') + ' / ' + String(state.dados.metas.obs).replace('.', ',')));
+  }
+  $('dlgTec').showModal();
+}
+$('tFechar').onclick = () => $('dlgTec').close();
+
+/* ----- busca ----- */
+$('busca').addEventListener('input', e => { state.busca = e.target.value; render(); });
+
+/* ----- filtros ----- */
+function abrirFiltro() {
+  $('fPeriodo').value = state.periodo;
+  $('fIni').value = state.ini; $('fFim').value = state.fim;
+  $('fCustom').hidden = state.periodo !== 'custom';
+  $('fSup').value = state.supervisor;
+  $('fOrd').value = state.ordem;
+  $('dlgFiltro').showModal();
+}
+$('filtroBtn').onclick = abrirFiltro;
+$('fPeriodo').onchange = () => { $('fCustom').hidden = $('fPeriodo').value !== 'custom'; };
+$('fLimpar').onclick = () => {
+  $('fPeriodo').value = 'ultimo'; $('fSup').value = ''; $('fOrd').value = 'concl';
+  $('fCustom').hidden = true; $('fIni').value = ''; $('fFim').value = '';
+};
+$('fForm').addEventListener('submit', () => {
+  const antes = state.periodo + state.ini + state.fim;
+  state.periodo = $('fPeriodo').value;
+  state.ini = $('fIni').value; state.fim = $('fFim').value;
+  if (state.periodo === 'custom' && (!state.ini || !state.fim)) state.periodo = 'ultimo';
+  state.supervisor = $('fSup').value;
+  state.ordem = $('fOrd').value;
+  store.set(K.filtros, { periodo: state.periodo, ini: state.ini, fim: state.fim, supervisor: state.supervisor, ordem: state.ordem });
+  if (antes !== state.periodo + state.ini + state.fim) setTimeout(carregar, 0); else render();
+});
+
+/* ----- menu ----- */
+$('menuBtn').onclick = () => $('dlgMenu').showModal();
+$('mFechar').onclick = () => $('dlgMenu').close();
+$('mAtualizar').onclick = () => { $('dlgMenu').close(); carregar(); };
+$('mCodigo').onclick = () => { $('dlgMenu').close(); pedirCodigo(''); };
+$('mComo').onclick = () => {
+  const h = $('how'); h.hidden = !h.hidden;
+  $('mComo').setAttribute('aria-expanded', String(!h.hidden));
+};
+
+/* ----- mais detalhes e atualizar ----- */
+$('maisBtn').onclick = () => {
+  const d = $('detalhes'); d.hidden = !d.hidden;
+  $('maisBtn').setAttribute('aria-expanded', String(!d.hidden));
+  if (!d.hidden) d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+$('fab').onclick = () => carregar();
+
+/* ----- atualização automática ----- */
+setInterval(() => { if (!document.hidden && Date.now() - state.ultimaCarga > AUTO_MIN * 60000) carregar(); }, 30000);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && state.ultimaCarga && Date.now() - state.ultimaCarga > 2 * 60000) carregar();
+});
+
+carregar();
+</script>
+</body>
+</html>
