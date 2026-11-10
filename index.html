@@ -501,7 +501,7 @@ function mostrarModo() {
   if (p === 'hoje') {
     m.className = 'modo hoje';
     txt.appendChild(el('b', '', 'Produção de hoje'));
-    txt.appendChild(el('small', '', 'Dados ao vivo da aba Encerramentos_Hoje'));
+    txt.appendChild(el('small', '', ''));
     m.appendChild(txt);
     m.appendChild(el('span', 'tag', 'Ao vivo'));
     return;
@@ -509,7 +509,7 @@ function mostrarModo() {
   m.className = 'modo hist';
   const somaHoje = p !== 'ontem' && p !== 'ultimo';
   txt.appendChild(el('b', '', rot[p] || p));
-  txt.appendChild(el('small', '', somaHoje ? 'Base Encerramentos + Encerramentos_Hoje' : 'Base Encerramentos'));
+  txt.appendChild(el('small', '', somaHoje ? ''));
   m.appendChild(txt);
   const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
   b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
