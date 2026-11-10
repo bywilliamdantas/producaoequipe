@@ -314,7 +314,8 @@
   <select id="fSup" class="ctl"><option value="">Todos</option></select>
   <label for="fOrd">Ordenar por</label>
   <select id="fOrd" class="ctl">
-    <option value="concl">Mais concluídos</option>
+    <option value="sup">Supervisor (A a Z) + mais concluídos</option>
+    <option value="concl">Mais concluídos (geral)</option>
     <option value="atencao">Atenção primeiro</option>
     <option value="reab">Mais reaberturas</option>
     <option value="nome">Nome (A a Z)</option>
@@ -371,13 +372,13 @@ const store = {
   get(k, fb) { try { const v = localStorage.getItem(k); return v === null ? fb : JSON.parse(v); } catch (_) { return fb; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
 };
-const K = { filtros: 'dp_filtros_v3', codigo: 'dp_codigo', url: 'dp_url' };
+const K = { filtros: 'dp_filtros_v4', codigo: 'dp_codigo', url: 'dp_url' };
 
 let SCRIPT_URL = URL_PADRAO;
 const urlValida = u => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
 
 const state = Object.assign(
-  { periodo: 'hoje', ini: '', fim: '', supervisor: '', ordem: 'concl' },
+  { periodo: 'hoje', ini: '', fim: '', supervisor: '', ordem: 'sup' },
   store.get(K.filtros, {})
 );
 state.busca = '';
@@ -492,7 +493,13 @@ function listaVisivel() {
   const ordNivel = { atencao: 0, obs: 1, normal: 2 };
   const nm = (a, c) => a.nome.localeCompare(c.nome, 'pt-BR');
   const o = state.ordem;
+  const sp = (a, c) => {
+    const x = a.supervisor || '', y = c.supervisor || '';
+    if (!x !== !y) return x ? -1 : 1;            // sem supervisor vai para o fim
+    return x.localeCompare(y, 'pt-BR');
+  };
   l = l.slice().sort((a, c) =>
+    o === 'sup' ? sp(a, c) || (c.concl - a.concl) || nm(a, c) :
     o === 'nome' ? nm(a, c) :
     o === 'atencao' ? (ordNivel[a.nivel] - ordNivel[c.nivel]) || (a.concl - c.concl) || nm(a, c) :
     o === 'reab' ? ((c.reabInst + c.reabPend) - (a.reabInst + a.reabPend)) || (c.concl - a.concl) || nm(a, c) :
@@ -613,7 +620,7 @@ function render() {
   ];
   itens.forEach(([k, v]) => { const x = el('div'); x.appendChild(el('span', '', k)); x.appendChild(el('b', '', String(v))); dg.appendChild(x); });
 
-  $('filtroBtn').classList.toggle('on', state.periodo !== 'hoje' || !!state.supervisor || state.ordem !== 'concl');
+  $('filtroBtn').classList.toggle('on', state.periodo !== 'hoje' || !!state.supervisor || state.ordem !== 'sup');
 }
 
 /* ----- detalhe do técnico ----- */
@@ -651,7 +658,7 @@ function abrirFiltro() {
 $('filtroBtn').onclick = abrirFiltro;
 $('fPeriodo').onchange = () => { $('fCustom').hidden = $('fPeriodo').value !== 'custom'; };
 $('fLimpar').onclick = () => {
-  $('fPeriodo').value = 'hoje'; $('fSup').value = ''; $('fOrd').value = 'concl';
+  $('fPeriodo').value = 'hoje'; $('fSup').value = ''; $('fOrd').value = 'sup';
   $('fCustom').hidden = true; $('fIni').value = ''; $('fFim').value = '';
 };
 $('fForm').addEventListener('submit', () => {
