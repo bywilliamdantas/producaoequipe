@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a111f">
-<title>Producao Parcial</title>
+<title>Desempenho da Equipe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -501,7 +501,7 @@ function mostrarModo() {
   if (p === 'hoje') {
     m.className = 'modo hoje';
     txt.appendChild(el('b', '', 'Produção de hoje'));
-    txt.appendChild(el('small', '', ''));
+    txt.appendChild(el('small', '', 'Dados ao vivo da aba Encerramentos_Hoje'));
     m.appendChild(txt);
     m.appendChild(el('span', 'tag', 'Ao vivo'));
     return;
@@ -509,7 +509,7 @@ function mostrarModo() {
   m.className = 'modo hist';
   const somaHoje = p !== 'ontem' && p !== 'ultimo';
   txt.appendChild(el('b', '', rot[p] || p));
-  txt.appendChild(el('small', '', somaHoje ? ''));
+  txt.appendChild(el('small', '', somaHoje ? 'Base Encerramentos + Encerramentos_Hoje' : 'Base Encerramentos'));
   m.appendChild(txt);
   const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
   b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
