@@ -74,6 +74,18 @@
   }
   .legend span { display: inline-flex; align-items: center; gap: 8px; }
   .legend i { width: 18px; height: 18px; border-radius: 4px; display: inline-block; }
+  .modo {
+    display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; text-align: center;
+    margin: 0 auto 10px; padding: 9px 14px; border-radius: 12px; font-size: .88rem; font-weight: 600; line-height: 1.3;
+    background: var(--panel); border: 1px solid var(--line2); color: #c3d3f0;
+  }
+  .modo b { font-weight: 800; }
+  .modo .dot { width: 10px; height: 10px; border-radius: 50%; background: #5be08e; flex: none; }
+  .modo.hoje { background: linear-gradient(180deg, #0d3a22, #09301b); border-color: var(--green-line); color: #c9f7dc; }
+  .modo.hoje .dot { animation: pulso 1.6s ease-in-out infinite; box-shadow: 0 0 0 0 rgba(91,224,142,.7); }
+  .modo.hist .dot { background: #7db2ff; }
+  @keyframes pulso { 70% { box-shadow: 0 0 0 8px rgba(91,224,142,0); } 100% { box-shadow: 0 0 0 0 rgba(91,224,142,0); } }
+  .modo button { background: transparent; border: 1px solid currentColor; border-radius: 8px; padding: 3px 10px; cursor: pointer; font-size: .8rem; }
   .periodo { text-align: center; color: var(--muted); font-size: .85rem; margin: 0 0 10px; min-height: 1.2em; }
 
   /* ===== tabela ===== */
@@ -97,7 +109,7 @@
   .row:hover { background: rgba(80,130,255,.06); }
   .pill {
     min-height: 36px; display: grid; place-items: center; text-align: center; padding: 3px 4px; border-radius: 7px;
-    background: linear-gradient(180deg, var(--purple), var(--purple2)); font-size: .68rem; font-weight: 700; line-height: 1.1; text-transform: uppercase;
+    background: linear-gradient(180deg, var(--sc1, var(--purple)), var(--sc2, var(--purple2))); font-size: .68rem; font-weight: 700; line-height: 1.1; text-transform: uppercase;
     word-break: break-word;
   }
   .c {
@@ -206,7 +218,7 @@
     .nome, .pill { font-size: .55rem; }
     .c { font-size: .88rem; }
   }
-  @media (prefers-reduced-motion: reduce) { .fab.load svg, .skel { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .fab.load svg, .skel, .modo .dot { animation: none; } }
 </style>
 </head>
 <body>
@@ -245,6 +257,7 @@
     <span><i style="background:var(--yellow)"></i>Observação</span>
     <span><i style="background:var(--green)"></i>Normal</span>
   </div>
+  <div class="modo" id="modo" role="status"></div>
   <p class="periodo" id="periodo"></p>
 
   <div id="aviso"></div>
@@ -285,10 +298,10 @@
   <h2>Filtros</h2><p class="sub">Escolha o período e como ordenar.</p>
   <label for="fPeriodo">Período</label>
   <select id="fPeriodo" class="ctl">
-    <option value="tudo">Todo o período da base</option>
-    <option value="ultimo">Último dia com dados</option>
-    <option value="hoje">Hoje</option>
+    <option value="hoje">Hoje (produção ao vivo)</option>
     <option value="ontem">Ontem</option>
+    <option value="ultimo">Último dia com dados</option>
+    <option value="tudo">Todo o período da base</option>
     <option value="7d">Últimos 7 dias</option>
     <option value="mes">Mês atual</option>
     <option value="custom">Personalizado</option>
@@ -329,6 +342,7 @@
     <p><b>Concluídos:</b> OS com status Encerramento, exceto tipo "Prestação de contas".</p>
     <p><b>Instalação:</b> Encerramento com tipo contendo "Instalação Fibra". <b>Pendência:</b> Encerramento com qualquer outro tipo.</p>
     <p><b>Reab. Inst. / Reab. Pend.:</b> o mesmo critério, apenas com a coluna Reabertura = 1.</p>
+    <p><b>Hoje:</b> usa a aba Encerramentos_Hoje (produção do dia, sempre atual). Mês, 7 dias, personalizado e todo o período somam a aba Encerramentos + Encerramentos_Hoje. Ontem e último dia usam só a aba Encerramentos.</p>
     <p><b>Cores:</b> comparam os concluídos do técnico com a meta por dia multiplicada pelos dias do período.</p>
   </div>
   <div class="actions"><button type="button" class="btn pri" id="mFechar">Fechar</button></div>
@@ -357,13 +371,13 @@ const store = {
   get(k, fb) { try { const v = localStorage.getItem(k); return v === null ? fb : JSON.parse(v); } catch (_) { return fb; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
 };
-const K = { filtros: 'dp_filtros_v2', codigo: 'dp_codigo', url: 'dp_url' };
+const K = { filtros: 'dp_filtros_v3', codigo: 'dp_codigo', url: 'dp_url' };
 
 let SCRIPT_URL = URL_PADRAO;
 const urlValida = u => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
 
 const state = Object.assign(
-  { periodo: 'tudo', ini: '', fim: '', supervisor: '', ordem: 'concl' },
+  { periodo: 'hoje', ini: '', fim: '', supervisor: '', ordem: 'concl' },
   store.get(K.filtros, {})
 );
 state.busca = '';
@@ -491,6 +505,41 @@ function celula(valor, extra) {
   return c;
 }
 
+/* ----- cor por supervisor ----- */
+// Cada supervisor recebe um matiz próprio (distribuído pela lista ordenada), então as cores nunca se repetem.
+const MATIZES = [265, 160, 25, 200, 330, 50, 120, 0, 230, 90, 300, 180];
+function corSup(nome) {
+  const lista = ((state.dados && state.dados.supervisores) || []).slice().sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  let i = lista.indexOf(nome);
+  if (i < 0) { let h = 0; for (const ch of String(nome || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; i = h; }
+  const hue = i < MATIZES.length ? MATIZES[i] : (i * 137.5) % 360;
+  return ['hsl(' + hue + ' 70% 42%)', 'hsl(' + hue + ' 72% 30%)'];
+}
+
+/* ----- faixa que mostra a fonte dos dados ----- */
+function mostrarModo() {
+  const m = $('modo'); m.innerHTML = '';
+  const p = state.periodo;
+  const dot = el('span', 'dot');
+  if (p === 'hoje') {
+    m.className = 'modo hoje';
+    m.appendChild(dot);
+    const t = el('span'); t.appendChild(el('b', '', 'PRODUÇÃO DE HOJE')); t.appendChild(document.createTextNode(' · dados ao vivo da aba Encerramentos_Hoje'));
+    m.appendChild(t);
+    return;
+  }
+  m.className = 'modo hist';
+  m.appendChild(dot);
+  const somaHoje = p !== 'ontem' && p !== 'ultimo';
+  const t = el('span');
+  t.appendChild(el('b', '', 'FILTRO: ' + (({ tudo: 'TODO O PERÍODO', ontem: 'ONTEM', ultimo: 'ÚLTIMO DIA COM DADOS', '7d': 'ÚLTIMOS 7 DIAS', mes: 'MÊS ATUAL', custom: 'PERÍODO PERSONALIZADO' })[p] || p)));
+  t.appendChild(document.createTextNode(somaHoje ? ' · base Encerramentos + Encerramentos_Hoje' : ' · base Encerramentos'));
+  m.appendChild(t);
+  const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
+  b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
+  m.appendChild(b);
+}
+
 /* ----- desenho ----- */
 function render() {
   const d = state.dados; if (!d) return;
@@ -501,6 +550,8 @@ function render() {
   $('periodo').textContent = d.periodo
     ? (d.periodo.ini === d.periodo.fim ? d.periodo.rotulo : d.periodo.rotulo + ' (' + d.periodo.iniBR + ' a ' + d.periodo.fimBR + ')')
     : '';
+
+  mostrarModo();
 
   // supervisores no filtro
   const sel = $('fSup'); const atual = state.supervisor;
@@ -521,7 +572,9 @@ function render() {
     const r = el('div', 'grid row');
     r.tabIndex = 0; r.setAttribute('role', 'button');
     r.setAttribute('aria-label', t.nome + ': ' + t.concl + ' concluídos');
-    r.appendChild(el('div', 'pill', t.supervisor || '-'));
+    const pl = el('div', 'pill', t.supervisor || '-');
+    const cs = corSup(t.supervisor); pl.style.setProperty('--sc1', cs[0]); pl.style.setProperty('--sc2', cs[1]);
+    r.appendChild(pl);
     r.appendChild(celula(t.reabInst, t.reabInst > 0 ? 'red' : ''));
     r.appendChild(celula(t.reabPend, t.reabPend > 0 ? 'red' : ''));
     r.appendChild(celula(t.inst));
@@ -560,7 +613,7 @@ function render() {
   ];
   itens.forEach(([k, v]) => { const x = el('div'); x.appendChild(el('span', '', k)); x.appendChild(el('b', '', String(v))); dg.appendChild(x); });
 
-  $('filtroBtn').classList.toggle('on', state.periodo !== 'tudo' || !!state.supervisor || state.ordem !== 'concl');
+  $('filtroBtn').classList.toggle('on', state.periodo !== 'hoje' || !!state.supervisor || state.ordem !== 'concl');
 }
 
 /* ----- detalhe do técnico ----- */
@@ -598,14 +651,14 @@ function abrirFiltro() {
 $('filtroBtn').onclick = abrirFiltro;
 $('fPeriodo').onchange = () => { $('fCustom').hidden = $('fPeriodo').value !== 'custom'; };
 $('fLimpar').onclick = () => {
-  $('fPeriodo').value = 'tudo'; $('fSup').value = ''; $('fOrd').value = 'concl';
+  $('fPeriodo').value = 'hoje'; $('fSup').value = ''; $('fOrd').value = 'concl';
   $('fCustom').hidden = true; $('fIni').value = ''; $('fFim').value = '';
 };
 $('fForm').addEventListener('submit', () => {
   const antes = state.periodo + state.ini + state.fim;
   state.periodo = $('fPeriodo').value;
   state.ini = $('fIni').value; state.fim = $('fFim').value;
-  if (state.periodo === 'custom' && (!state.ini || !state.fim)) state.periodo = 'tudo';
+  if (state.periodo === 'custom' && (!state.ini || !state.fim)) state.periodo = 'hoje';
   state.supervisor = $('fSup').value;
   state.ordem = $('fOrd').value;
   store.set(K.filtros, { periodo: state.periodo, ini: state.ini, fim: state.fim, supervisor: state.supervisor, ordem: state.ordem });
