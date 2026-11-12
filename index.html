@@ -221,10 +221,36 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 @media (max-width:420px){.stamp>.i{display:none}.icon-btn{width:40px;height:40px}.logo{width:30px;height:30px}.stamp{padding:6px 8px}.modo .mi .i{width:28px;height:28px}.modo .live{padding:6px 10px}}
 @media (min-width:521px){.grid{column-gap:6px;padding-inline:10px;grid-template-columns:minmax(110px,1.9fr) repeat(3,minmax(44px,.6fr)) minmax(48px,.7fr) minmax(60px,.9fr) minmax(120px,2fr) 14px}.pill{font-size:.78rem}.nome{font-size:.95rem}.thead{font-size:.78rem}}
 @media (prefers-reduced-motion:reduce){.loading .refbtn .i{animation:none}}
+
+/* ===== tela de login (supervisor) ===== */
+#login{display:none;position:fixed;inset:0;z-index:50;overflow-y:auto;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 20px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),radial-gradient(70% 40% at 100% 100%,rgba(255,120,20,.2),transparent 70%),radial-gradient(60% 35% at 0% 100%,rgba(47,123,255,.18),transparent 70%),var(--bg)}
+.sem-login #login{display:flex}
+.sem-login .wrap{display:none}
+.lg-card{width:min(400px,100%);padding:28px 22px 22px;border-radius:24px;border:1.5px solid rgba(79,140,255,.55);background:linear-gradient(165deg,rgba(20,48,106,.92),rgba(10,22,49,.96) 60%,rgba(8,16,36,.98));box-shadow:0 0 34px rgba(47,123,255,.28),0 18px 50px rgba(0,0,0,.45);text-align:center;animation:sobe .35s ease-out}
+.lg-logo{width:64px;height:64px;margin:0 auto 14px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(160deg,#14306a,#0a1631);border:1px solid var(--line-strong);box-shadow:0 0 22px rgba(47,123,255,.35)}
+.lg-logo svg{width:40px;height:40px}
+.lg-card h1{margin:0;font-size:clamp(1.5rem,7vw,1.9rem);font-weight:700;color:#fff;line-height:1.1}
+.lg-card .lg-sub{margin:8px 0 22px;color:#b6c6e6;font-size:.9rem;line-height:1.35}
+.lg-field{text-align:left}
+.lg-field label{display:flex;align-items:center;gap:6px;margin:0 0 8px 2px;font-size:.85rem;font-weight:600;color:#cfdcf5}
+.lg-field label .i{width:16px;height:16px;fill:currentColor;stroke:none;color:#7fb0ff}
+.lg-sel{width:100%;height:52px;padding:0 44px 0 16px;border-radius:16px;border:1.5px solid var(--line-strong);background:linear-gradient(180deg,#0f1f45,#091329);color:#fff;font-size:1rem;font-weight:600;box-shadow:0 0 12px rgba(47,123,255,.15);appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239cc0ff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"),linear-gradient(180deg,#0f1f45,#091329);background-repeat:no-repeat;background-position:right 14px center,0 0;background-size:20px 20px,auto}
+.lg-sel:focus{border-color:#4f8cff;box-shadow:0 0 0 3px rgba(79,140,255,.25)}
+.lg-sel:disabled{opacity:.6;cursor:progress}
+.lg-btn{width:100%;height:52px;margin-top:16px;border:0;border-radius:16px;cursor:pointer;font-size:1.05rem;font-weight:700;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#4f9bff,#2362e0);box-shadow:0 0 20px rgba(47,123,255,.5);transition:transform .12s,filter .12s}
+.lg-btn:active{transform:scale(.98)}
+.lg-btn .i{width:20px;height:20px}
+.lg-btn:disabled{cursor:not-allowed;filter:grayscale(.7) brightness(.7);box-shadow:none}
+.lg-msg{min-height:1.2em;margin:14px 0 0;font-size:.82rem;color:#b6c6e6}
+.lg-msg.erro{color:#ff8f96}
+.lg-retry{margin-top:8px;padding:8px 16px;border-radius:12px;border:1px solid var(--line-strong);background:transparent;color:#fff;font-weight:600;cursor:pointer}
+.lg-foot{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:.74rem;color:#8fa2c8}
+.sairbtn{color:#ffb3b8}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 8l4 4-4 4M20 12H9"/></symbol>
 <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.5 4M20 20v-4h-4"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></symbol>
 <symbol id="i-calcheck" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M9 15.5l2.2 2.2 4-4.5"/></symbol>
@@ -243,6 +269,20 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
 <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0z" fill="currentColor"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8"/></symbol>
 </defs></svg>
+<div id="login" role="dialog" aria-labelledby="lgTitulo">
+  <form class="lg-card" id="lgForm" autocomplete="off">
+    <div class="lg-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
+    <h1 id="lgTitulo">Produção Parcial</h1>
+    <p class="lg-sub">Selecione o seu supervisor para acessar o painel da sua equipe.</p>
+    <div class="lg-field">
+      <label for="lgSup"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Supervisor</label>
+      <select id="lgSup" class="lg-sel" required disabled><option value="">Carregando…</option></select>
+    </div>
+    <button type="submit" class="lg-btn" id="lgBtn" disabled>Entrar<svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></button>
+    <p class="lg-msg" id="lgMsg" aria-live="polite"></p>
+    <div class="lg-foot">Seu acesso fica salvo neste aparelho.</div>
+  </form>
+</div>
 <div class="wrap">
 
   <header class="top">
@@ -252,6 +292,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
     </div>
     <div class="stamp"><svg class="i" aria-hidden="true"><use href="#i-cal"/></svg><div><span>Atualizado em</span><b id="atual">--</b></div></div>
     <button class="icon-btn refbtn" id="refBtn" aria-label="Atualizar dados"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+    <button class="icon-btn sairbtn" id="sairBtn" aria-label="Sair" title="Sair"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button>
   </header>
 
   <div class="tools">
@@ -324,8 +365,8 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
     <label for="fIni">De</label><input id="fIni" type="date" class="ctl">
     <label for="fFim">Até</label><input id="fFim" type="date" class="ctl">
   </div>
-  <label for="fSup">Supervisor</label>
-  <select id="fSup" class="ctl"><option value="">Todos</option></select>
+  <label for="fSup" hidden>Supervisor</label>
+  <select id="fSup" class="ctl" hidden><option value="">Todos</option></select>
   <label for="fOrd">Ordenar por</label>
   <select id="fOrd" class="ctl">
     <option value="sup">Supervisor (A a Z) + mais concluídos</option>
@@ -382,7 +423,7 @@ const store = {
   get(k, fb) { try { const v = localStorage.getItem(k); return v === null ? fb : JSON.parse(v); } catch (_) { return fb; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
 };
-const K = { filtros: 'dp_filtros_v4', codigo: 'dp_codigo', url: 'dp_url' };
+const K = { filtros: 'dp_filtros_v4', codigo: 'dp_codigo', url: 'dp_url', sup: 'dp_supervisor' };
 
 let SCRIPT_URL = URL_PADRAO;
 const urlValida = u => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
@@ -393,6 +434,10 @@ const state = Object.assign(
 );
 state.busca = '';
 state.codigo = store.get(K.codigo, '');
+// supervisor que fez "login" neste aparelho (salvo localmente); o filtro de supervisor antigo deixa de ser usado
+state.login = String(store.get(K.sup, '') || '');
+state.supervisor = '';
+document.body.classList.toggle('sem-login', !state.login);
 state.dados = null;
 state.ultimaCarga = 0;
 let carregando = false;
@@ -473,6 +518,7 @@ async function carregar() {
   } catch (e) {
     $('rows').innerHTML = state.dados ? $('rows').innerHTML : '';
     const abortou = e && e.name === 'AbortError';
+    if (!state.login && !state.dados) loginErro(abortou ? 'A conexão demorou demais.' : 'Não foi possível carregar os supervisores.');
     aviso(abortou ? 'A conexão demorou demais.'
       : (e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Não foi possível carregar os dados.'),
       'erro', true);
@@ -501,7 +547,7 @@ function listaVisivel() {
   const d = state.dados; if (!d) return [];
   const b = semAcento(state.busca).trim();
   let l = d.tecnicos.filter(t =>
-    (!b || semAcento(t.nome).includes(b)) && (!state.supervisor || t.supervisor === state.supervisor));
+    (!b || semAcento(t.nome).includes(b)) && (!state.login || t.supervisor === state.login));
   const ordNivel = { atencao: 0, obs: 1, normal: 2 };
   const nm = (a, c) => a.nome.localeCompare(c.nome, 'pt-BR');
   const o = state.ordem;
@@ -563,6 +609,11 @@ function render() {
     ? (d.periodo.ini === d.periodo.fim ? d.periodo.rotulo : d.periodo.rotulo + ' (' + d.periodo.iniBR + ' a ' + d.periodo.fimBR + ')')
     : '';
 
+  // supervisor salvo que não existe mais na lista: volta para a tela de login
+  if (state.login && (d.supervisores || []).length && !d.supervisores.includes(state.login)) { sair('Seu supervisor não foi encontrado. Selecione novamente.'); return; }
+  loginPopular();
+  if (state.login) $('periodo').textContent += ' · Supervisor ' + tc(state.login);
+
   mostrarModo();
 
   // supervisores no filtro
@@ -578,7 +629,7 @@ function render() {
   const lista = listaVisivel();
   const rows = $('rows'); rows.innerHTML = '';
   if (!lista.length) {
-    rows.appendChild(el('div', 'vazio', state.busca || state.supervisor ? 'Nenhum técnico encontrado.' : 'Nenhum técnico cadastrado.'));
+    rows.appendChild(el('div', 'vazio', state.busca || state.login ? 'Nenhum técnico encontrado.' : 'Nenhum técnico cadastrado.'));
   }
   lista.forEach(t => {
     const r = el('div', 'grid row ' + t.nivel);
@@ -687,6 +738,46 @@ $('maisBtn').onclick = () => {
 };
 $('refBtn').onclick = () => carregar();
 
+/* ----- login por supervisor ----- */
+function loginPopular(msg, erro) {
+  const sel = $('lgSup'), btn = $('lgBtn'), m = $('lgMsg');
+  const lista = ((state.dados && state.dados.supervisores) || []).slice().sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const atual = sel.value;
+  sel.innerHTML = '';
+  const o0 = el('option', '', lista.length ? 'Selecione o supervisor' : 'Nenhum supervisor encontrado'); o0.value = ''; sel.appendChild(o0);
+  lista.forEach(s => { const o = el('option', '', tc(s)); o.value = s; sel.appendChild(o); });
+  sel.value = lista.includes(atual) ? atual : '';
+  sel.disabled = !lista.length;
+  btn.disabled = !sel.value;
+  m.className = 'lg-msg' + (erro ? ' erro' : '');
+  m.textContent = msg || '';
+}
+function loginErro(msg) {
+  const sel = $('lgSup'), m = $('lgMsg');
+  sel.innerHTML = '<option value="">Indisponível</option>'; sel.disabled = true; $('lgBtn').disabled = true;
+  m.className = 'lg-msg erro'; m.textContent = msg || 'Não foi possível carregar.';
+  const b = el('button', 'lg-retry', 'Tentar de novo'); b.type = 'button';
+  b.onclick = () => { m.className = 'lg-msg'; m.textContent = 'Carregando…'; carregar(); };
+  m.appendChild(document.createElement('br')); m.appendChild(b);
+}
+$('lgSup').onchange = () => { $('lgBtn').disabled = !$('lgSup').value; };
+$('lgForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('lgSup').value; if (!v) return;
+  state.login = v; store.set(K.sup, v);
+  document.body.classList.remove('sem-login');
+  window.scrollTo(0, 0);
+  if (state.dados) render(); else carregar();
+});
+function sair(msg) {
+  state.login = ''; store.set(K.sup, '');
+  state.busca = ''; $('busca').value = '';
+  document.body.classList.add('sem-login');
+  loginPopular(msg, !!msg);
+  if (!state.dados) { $('lgMsg').textContent = 'Carregando…'; carregar(); }
+}
+$('sairBtn').onclick = () => sair();
+
 setInterval(() => { if (state.dados) mostrarModo(); }, 30000);
 
 /* ----- atualização automática ----- */
@@ -695,6 +786,7 @@ document.addEventListener('visibilitychange', () => {
   if (!document.hidden && state.ultimaCarga && Date.now() - state.ultimaCarga > 2 * 60000) carregar();
 });
 
+if (!state.login) $('lgMsg').textContent = 'Carregando…';
 carregar();
 </script>
 </body>
