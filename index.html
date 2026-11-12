@@ -230,6 +230,14 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .c.acima{height:44px;font-size:1.5rem;border-width:1.5px;background:linear-gradient(180deg,rgba(59,155,255,.3),rgba(10,50,120,.7));border-color:rgba(59,155,255,.7);color:#6fb8ff;box-shadow:0 0 12px rgba(59,155,255,.25)}
 @property --fill{syntax:'<percentage>';inherits:true;initial-value:0%}
 .kpi.ok.prog{background:linear-gradient(0deg,rgba(20,200,120,.95) var(--fill),rgba(20,200,120,0) var(--fill));transition:--fill .8s ease}
+.kpis{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.kpi{padding:10px 1px 8px;border-radius:13px}
+.kpi .i{width:22px;height:22px}
+.kpi b,.kpi.ok b,.kpi.warn b,.kpi.bad b{font-size:clamp(1.15rem,5.2vw,1.9rem)}
+.kpi span{font-size:clamp(.54rem,2.5vw,.78rem);white-space:nowrap}
+@property --gf{syntax:'<percentage>';inherits:true;initial-value:100%}
+.kpi.gap{--k:255,60,75;--gf:100%;background:linear-gradient(0deg,#e8212f var(--gf),#07070a var(--gf));transition:--gf .8s ease}
+.kpi.gap.trofeu .i{color:#ffc233;filter:drop-shadow(0 0 6px rgba(255,194,51,.7))}
 .chip.acima{background:rgba(59,155,255,.18);color:#6fb8ff}
 .legend span:nth-child(4) i{color:#3b9bff}
 
@@ -271,6 +279,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
 <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.2" cy="9" r="2.6"/><path d="M17 14.2c2.7 0 4.5 1.9 4.5 4.8"/></symbol>
+<symbol id="i-gap" viewBox="0 0 24 24"><path d="M3 7l6 6 4-4 8 8M21 11v6h-6"/></symbol>
 <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M2.5 18.5h19M5.5 18.5V16a6.5 6.5 0 0 1 13 0v2.5M9.5 9.8V5.5h5v4.3"/></symbol>
 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
 <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.01" stroke-width="2.8"/></symbol>
@@ -323,6 +332,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
     <div class="kpi warn"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg><b id="kPend">0</b><span>Pendências</span></div>
     <div class="kpi inst"><svg class="i" aria-hidden="true"><use href="#i-bars"/></svg><b id="kInst">0</b><span>Instalações</span></div>
     <div class="kpi ok"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><b id="kConcl">0</b><span>Concluídos</span></div>
+    <div class="kpi gap" id="kGapCard"><svg class="i" id="kGapIcon" aria-hidden="true"><use href="#i-gap"/></svg><b id="kGap">0</b><span>Gap</span></div>
   </section>
 
   <div class="modo" id="modo" role="status"></div>
@@ -404,7 +414,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
 const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbyIboXPeqTE2dpgQankFdQka03uEXN952DpOjfrQYoH0UHjTQH63q4gDYjeP-LauHxH/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbyIboXPeqTE2dpgQankFdQka03uEXN952DpOjfrQYoH0UHjTQH63q4gDYjeP-LauHxH/exec';
+const URL_CSV = '';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -675,6 +685,18 @@ function render() {
   // filtro Hoje: o cartão enche de baixo para cima (meta = técnicos ativos x 5); demais filtros: verde cheio
   const kc = $('kConcl').parentElement, meta = lista.length * 5;
   kc.classList.toggle('prog', state.periodo === 'hoje');
+  // Gap: começa em -(técnicos x 5) vermelho cheio; esvazia para preto conforme os concluídos sobem; na meta = 0; acima = +excedente com troféu
+  const gc = $('kGapCard'), gv = $('kGap');
+  if (diario && meta) {
+    const g = s.concl - meta;
+    gv.textContent = g > 0 ? '+' + g : String(g);
+    gc.style.setProperty('--gf', Math.max(0, 100 - s.concl / meta * 100).toFixed(1) + '%');
+    gc.classList.toggle('trofeu', g > 0);
+    $('kGapIcon').innerHTML = '<use href="#i-' + (g > 0 ? 'trophy' : 'gap') + '"/>';
+  } else {
+    gv.textContent = '--'; gc.style.setProperty('--gf', '0%'); gc.classList.remove('trofeu');
+    $('kGapIcon').innerHTML = '<use href="#i-gap"/>';
+  }
   kc.style.setProperty('--fill', (state.periodo === 'hoje' && meta ? Math.min(100, s.concl / meta * 100) : 0).toFixed(1) + '%');
 
   const dg = $('dgrid'); dg.innerHTML = '';
