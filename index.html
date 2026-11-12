@@ -81,7 +81,7 @@
   /* ===== tabela ===== */
   .table { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
   .grid { display: grid; align-items: center; column-gap: 3px; padding-inline: 6px;
-    grid-template-columns: minmax(56px, 1.1fr) repeat(5, minmax(29px, .55fr)) minmax(80px, 1.65fr); }
+    grid-template-columns: repeat(5, minmax(29px, .55fr)) minmax(80px, 1.65fr); }
   .thead { position: sticky; top: 0; z-index: 4; min-height: 44px; padding-block: 6px; background: var(--surface2); border-bottom: 1px solid var(--line-strong); border-radius: 15px 15px 0 0; font-size: .66rem; font-weight: 600; text-align: center; line-height: 1.15; color: var(--muted); }
   .thead > div { min-width: 0; }
   .thead .sup, .thead .tec { text-align: left; padding-left: 4px; }
@@ -189,7 +189,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .legend{gap:14px;font-size:.9rem}.legend i{width:16px;height:16px;box-shadow:0 0 10px currentColor}
 .legend span:nth-child(1) i{color:var(--bad)}.legend span:nth-child(2) i{color:var(--warn)}.legend span:nth-child(3) i{color:var(--ok)}
 .table{border:1.5px solid var(--line-strong);border-radius:18px;background:linear-gradient(180deg,#0a1530,#07102a);box-shadow:0 0 20px rgba(47,123,255,.14)}
-.grid{column-gap:3px;padding-inline:6px;grid-template-columns:minmax(72px,1.9fr) repeat(3,minmax(22px,.5fr)) minmax(24px,.55fr) minmax(36px,.8fr) minmax(62px,1.6fr) 12px}
+.grid{column-gap:3px;padding-inline:6px;grid-template-columns:repeat(3,minmax(22px,.5fr)) minmax(24px,.55fr) minmax(36px,.8fr) minmax(62px,1.6fr) 12px}
 .thead{background:linear-gradient(180deg,#112456,#0a1634);border-radius:17px 17px 0 0;min-height:52px;font-size:.66rem;color:#d0dcf5}
 .thead>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 .thead .sup,.thead .tec{flex-direction:row;justify-content:flex-start;gap:6px;font-size:.74rem}
@@ -219,8 +219,17 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .modo.sync-bad .live{background:linear-gradient(180deg,#ff6b73,#d93a44);box-shadow:0 0 14px rgba(255,80,90,.5)}
 .modo.sync-bad .dot{background:#ff6b73;box-shadow:0 0 10px #ff6b73;animation:none}
 @media (max-width:420px){.stamp>.i{display:none}.icon-btn{width:40px;height:40px}.logo{width:30px;height:30px}.stamp{padding:6px 8px}.modo .mi .i{width:28px;height:28px}.modo .live{padding:6px 10px}}
-@media (min-width:521px){.grid{column-gap:6px;padding-inline:10px;grid-template-columns:minmax(110px,1.9fr) repeat(3,minmax(44px,.6fr)) minmax(48px,.7fr) minmax(60px,.9fr) minmax(120px,2fr) 14px}.pill{font-size:.78rem}.nome{font-size:.95rem}.thead{font-size:.78rem}}
+@media (min-width:521px){.grid{column-gap:6px;padding-inline:10px;grid-template-columns:repeat(3,minmax(44px,.6fr)) minmax(48px,.7fr) minmax(60px,.9fr) minmax(120px,2fr) 14px}.pill{font-size:.78rem}.nome{font-size:.95rem}.thead{font-size:.78rem}}
 @media (prefers-reduced-motion:reduce){.loading .refbtn .i{animation:none}}
+
+/* ===== ajustes ===== */
+.modo .mt .up{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:.8rem;font-weight:500;opacity:.92}
+.modo .mt .up .i{width:14px;height:14px;flex:none}
+.modo .mt .up em{font-style:normal;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.row.acima{--lv:#3b9bff}
+.c.acima{height:44px;font-size:1.5rem;border-width:1.5px;background:linear-gradient(180deg,rgba(59,155,255,.3),rgba(10,50,120,.7));border-color:rgba(59,155,255,.7);color:#6fb8ff;box-shadow:0 0 12px rgba(59,155,255,.25)}
+.chip.acima{background:rgba(59,155,255,.18);color:#6fb8ff}
+.legend span:nth-child(4) i{color:#3b9bff}
 
 /* ===== tela de login (supervisor) ===== */
 #login{display:none;position:fixed;inset:0;z-index:50;overflow-y:auto;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 20px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),radial-gradient(70% 40% at 100% 100%,rgba(255,120,20,.2),transparent 70%),radial-gradient(60% 35% at 0% 100%,rgba(47,123,255,.18),transparent 70%),var(--bg)}
@@ -273,14 +282,14 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
   <form class="lg-card" id="lgForm" autocomplete="off">
     <div class="lg-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
     <h1 id="lgTitulo">Produção Parcial</h1>
-    <p class="lg-sub">Selecione o seu supervisor para acessar o painel da sua equipe.</p>
+    <p class="lg-sub">As informações em sistema NÃO são valores validados para premiação</p>
     <div class="lg-field">
       <label for="lgSup"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Supervisor</label>
       <select id="lgSup" class="lg-sel" required disabled><option value="">Carregando…</option></select>
     </div>
     <button type="submit" class="lg-btn" id="lgBtn" disabled>Entrar<svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></button>
     <p class="lg-msg" id="lgMsg" aria-live="polite"></p>
-    <div class="lg-foot">Seu acesso fica salvo neste aparelho.</div>
+    <div class="lg-foot">© 2026 William Dantas</div>
   </form>
 </div>
 <div class="wrap">
@@ -288,9 +297,8 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
   <header class="top">
     <div class="brand">
       <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
-      <div><h1 id="titulo">Produção Parcial</h1><p id="subtitulo">Os valores poderão sofrer alterações.</p></div>
+      <div><h1 id="titulo">Produção Parcial</h1><p id="subtitulo"></p></div>
     </div>
-    <div class="stamp"><svg class="i" aria-hidden="true"><use href="#i-cal"/></svg><div><span>Atualizado em</span><b id="atual">--</b></div></div>
     <button class="icon-btn refbtn" id="refBtn" aria-label="Atualizar dados"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg></button>
     <button class="icon-btn sairbtn" id="sairBtn" aria-label="Sair" title="Sair"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button>
   </header>
@@ -316,11 +324,11 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 
   <div class="modo" id="modo" role="status"></div>
   <div class="meta">
-    <p class="periodo" id="periodo"></p>
     <div class="legend" aria-label="Legenda dos concluídos">
       <span><i style="background:var(--bad)"></i>Atenção</span>
       <span><i style="background:var(--warn)"></i>Observação</span>
       <span><i style="background:var(--ok)"></i>Normal</span>
+      <span><i style="background:#3b9bff"></i>Acima</span>
     </div>
   </div>
 
@@ -328,7 +336,6 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 
   <section class="table" aria-label="Desempenho por técnico">
     <div class="grid thead" role="row">
-      <div class="sup"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg> Supervisor</div>
       <div class="rb"><svg class="i" style="color:#ff4a55" aria-hidden="true"><use href="#i-warn"/></svg><span>Reab.<br>Inst.</span></div>
       <div class="rb"><svg class="i" style="color:#ffb020" aria-hidden="true"><use href="#i-warn"/></svg><span>Reab.<br>Pend.</span></div>
       <div><svg class="i" style="color:#7fb0ff" aria-hidden="true"><use href="#i-bars"/></svg><span><span class="l">Instalação</span><span class="s">Inst.</span></span></div>
@@ -345,7 +352,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
   </button>
   <div class="details" id="detalhes" hidden><div class="dgrid" id="dgrid"></div></div>
-<footer class="foot"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg><span>Gestão eficiente, equipe <b>mais produtiva!</b></span></footer>
+<footer class="foot"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg><span>© 2026 <b>William Dantas</b></span></footer>
 </div>
 
 <!-- Filtros -->
@@ -400,9 +407,9 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <script>
 /* ============ CONFIGURAÇÃO ============ */
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbxXWPoFaRaqpzYtEvegl7nBQBkOQTJzI0uAIuo6pSFHxkbIHvW40-ItVXRRwoTn6BpF/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbx_MN6CeQhy8VT8ez0HskqNjTrlt2qkDtp5_tQwwL9pHlgpddW4ZRsiMlaBxuDHkC2R/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = '';
+const URL_CSV = 'https://script.google.com/macros/s/AKfycbx_MN6CeQhy8VT8ez0HskqNjTrlt2qkDtp5_tQwwL9pHlgpddW4ZRsiMlaBxuDHkC2R/exec';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -548,7 +555,7 @@ function listaVisivel() {
   const b = semAcento(state.busca).trim();
   let l = d.tecnicos.filter(t =>
     (!b || semAcento(t.nome).includes(b)) && (!state.login || t.supervisor === state.login));
-  const ordNivel = { atencao: 0, obs: 1, normal: 2 };
+  const ordNivel = { atencao: 0, obs: 1, normal: 2, acima: 3 };
   const nm = (a, c) => a.nome.localeCompare(c.nome, 'pt-BR');
   const o = state.ordem;
   const sp = (a, c) => {
@@ -593,6 +600,11 @@ function mostrarModo() {
   const mi = el('span', 'mi'); mi.innerHTML = ic('calcheck'); m.appendChild(mi);
   const t = el('div', 'mt');
   t.appendChild(el('b', '', hoje ? 'Produção de hoje' : 'Filtro: ' + (NOME_P[p] || p)));
+  const dd = state.dados || {};
+  const up = el('span', 'up'); up.innerHTML = ic('cal');
+  up.appendChild(document.createTextNode('Atualizado em '));
+  up.appendChild(el('em', '', fmtStamp(dd.hojeAtualizadoMs || dd.hojeAtualizado) || dd.atualizado || '--'));
+  t.appendChild(up);
   m.appendChild(t);
   if (hoje) { const v = el('span', 'live'); v.innerHTML = ic('eye') + (idade != null && !isNaN(idade) ? 'há ' + (idade < 1 ? '<1' : idade < 60 ? Math.floor(idade) : Math.floor(idade / 60) + 'h' + String(Math.floor(idade % 60)).padStart(2, '0')) + (idade < 60 ? ' min' : '') : 'Ao vivo'); m.appendChild(v); return; }
   const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
@@ -601,18 +613,21 @@ function mostrarModo() {
 }
 
 /* ----- desenho ----- */
+// cores dos concluídos (produção diária): até 2 vermelho · 3 e 4 laranja · 5 verde · acima de 5 azul
+const nivelDia = c => c <= 2 ? 'atencao' : c <= 4 ? 'obs' : c === 5 ? 'normal' : 'acima';
 function render() {
   const d = state.dados; if (!d) return;
+  const diario = state.periodo === 'hoje' || state.periodo === 'ontem' || !!(d.periodo && d.periodo.ini && d.periodo.ini === d.periodo.fim);
+  (d.tecnicos || []).forEach(t => { if (t.nivelBase === undefined) t.nivelBase = t.nivel; t.nivel = diario ? nivelDia(Number(t.concl) || 0) : t.nivelBase; });
   // data/hora = última alteração da base de encerrados de hoje (campo hojeAtualizado); cai para d.atualizado se o script ainda não envia
-  $('atual').textContent = fmtStamp(d.hojeAtualizadoMs || d.hojeAtualizado) || d.atualizado || '--';
-  $('periodo').textContent = d.periodo
+  $('subtitulo').textContent = d.periodo
     ? (d.periodo.ini === d.periodo.fim ? d.periodo.rotulo : d.periodo.rotulo + ' (' + d.periodo.iniBR + ' a ' + d.periodo.fimBR + ')')
     : '';
 
   // supervisor salvo que não existe mais na lista: volta para a tela de login
   if (state.login && (d.supervisores || []).length && !d.supervisores.includes(state.login)) { sair('Seu supervisor não foi encontrado. Selecione novamente.'); return; }
   loginPopular();
-  if (state.login) $('periodo').textContent += ' · Supervisor ' + tc(state.login);
+  if (state.login) $('subtitulo').textContent += ' · Supervisor ' + tc(state.login);
 
   mostrarModo();
 
@@ -635,9 +650,6 @@ function render() {
     const r = el('div', 'grid row ' + t.nivel);
     r.tabIndex = 0; r.setAttribute('role', 'button');
     r.setAttribute('aria-label', t.nome + ': ' + t.concl + ' concluídos');
-    const pl = el('div', 'pill'); pl.innerHTML = ic('user'); pl.appendChild(el('span', '', tc(t.supervisor) || '-'));
-    pl.style.setProperty('--h', corSup(t.supervisor));
-    r.appendChild(pl);
     r.appendChild(celula(t.reabInst, t.reabInst > 0 ? 'red' : ''));
     r.appendChild(celula(t.reabPend, t.reabPend > 0 ? 'red' : ''));
     r.appendChild(celula(t.inst));
@@ -658,8 +670,8 @@ function render() {
     a.concl += t.concl; a.inst += t.inst; a.pend += t.pend; a.outros += t.outros;
     a.reabI += t.reabInst; a.reabP += t.reabPend; a.reabO += t.reabOutros;
     a.canc += t.cancel; a.atraso += t.atraso;
-    a[t.nivel]++; return a;
-  }, { concl: 0, inst: 0, pend: 0, outros: 0, reabI: 0, reabP: 0, reabO: 0, canc: 0, atraso: 0, atencao: 0, obs: 0, normal: 0 });
+    a[t.nivel] = (a[t.nivel] || 0) + 1; return a;
+  }, { concl: 0, inst: 0, pend: 0, outros: 0, reabI: 0, reabP: 0, reabO: 0, canc: 0, atraso: 0, atencao: 0, obs: 0, normal: 0, acima: 0 });
 
   $('kTec').textContent = lista.length;
   $('kPend').textContent = s.pend;
@@ -670,7 +682,7 @@ function render() {
   const itens = [
     ['Instalação', s.inst], ['Reab. Inst.', s.reabI], ['Prest. de contas', s.outros], ['Reab. prest. contas', s.reabO],
     ['Cancelados', s.canc], ['Em atraso (SLA)', s.atraso],
-    ['Em atenção', s.atencao], ['Em observação', s.obs], ['Normal', s.normal],
+    ['Em atenção', s.atencao], ['Em observação', s.obs], ['Normal', s.normal], ['Acima', s.acima],
     ['Média por técnico', lista.length ? (s.concl / lista.length).toFixed(1).replace('.', ',') : '0'],
     ['Meta Normal (período)', d.metas ? String(d.metas.normal).replace('.', ',') : '-'],
     ['Meta Observação (período)', d.metas ? String(d.metas.obs).replace('.', ',') : '-']
@@ -686,7 +698,7 @@ function abrirTecnico(t) {
   $('tSup').textContent = t.supervisor ? 'Supervisor: ' + tc(t.supervisor) : '';
   const ch = $('tChip');
   ch.className = 'chip ' + t.nivel;
-  ch.textContent = t.nivel === 'normal' ? 'Normal' : t.nivel === 'obs' ? 'Observação' : 'Atenção';
+  ch.textContent = t.nivel === 'acima' ? 'Acima' : t.nivel === 'normal' ? 'Normal' : t.nivel === 'obs' ? 'Observação' : 'Atenção';
   const dl = $('tDet'); dl.innerHTML = '';
   [['Concluídos', t.concl], ['Instalação', t.inst], ['Pendência', t.pend], ['Prest. de contas', t.outros],
    ['Reab. Instalação', t.reabInst], ['Reab. Pendência', t.reabPend], ['Reab. prest. contas', t.reabOutros],
