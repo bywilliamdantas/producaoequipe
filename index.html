@@ -212,6 +212,10 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .loading .refbtn .i{animation:rot .9s linear infinite}
 .foot{display:flex;align-items:center;gap:10px;margin:22px 4px 0;padding-top:14px;border-top:2px solid transparent;border-image:linear-gradient(90deg,#ff8a1f,#2f7bff 60%,transparent) 1;font-style:italic;color:#dbe6ff;font-size:1rem}
 .foot .i{width:30px;height:30px;color:#ffa31a}.foot b{color:#ffa31a;font-weight:600}
+.modo.sync-warn .live{background:linear-gradient(180deg,#ffb347,#f08a00);box-shadow:0 0 14px rgba(255,159,28,.5)}
+.modo.sync-bad .live{background:linear-gradient(180deg,#ff6b73,#d93a44);box-shadow:0 0 14px rgba(255,80,90,.5)}
+.modo.hoje.sync-warn .dot{background:#ff9f1c;animation:none}
+.modo.hoje.sync-bad .dot{background:var(--bad);animation:none}
 @media (max-width:420px){.stamp>.i{display:none}.icon-btn{width:40px;height:40px}.logo{width:30px;height:30px}.stamp{padding:6px 8px}.modo .mi .i{width:28px;height:28px}.modo .live{padding:6px 10px}}
 @media (min-width:521px){.grid{column-gap:6px;padding-inline:10px;grid-template-columns:minmax(110px,1.9fr) repeat(3,minmax(44px,.6fr)) minmax(48px,.7fr) minmax(60px,.9fr) minmax(120px,2fr) 14px}.pill{font-size:.78rem}.nome{font-size:.95rem}.thead{font-size:.78rem}}
 @media (prefers-reduced-motion:reduce){.loading .refbtn .i{animation:none}}
@@ -355,7 +359,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
 const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbxXWPoFaRaqpzYtEvegl7nBQBkOQTJzI0uAIuo6pSFHxkbIHvW40-ItVXRRwoTn6BpF/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbxXWPoFaRaqpzYtEvegl7nBQBkOQTJzI0uAIuo6pSFHxkbIHvW40-ItVXRRwoTn6BpF/exec';
+const URL_CSV = '';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -533,13 +537,16 @@ function corSup(nome) {
 const NOME_P = { tudo: 'todo o período', ontem: 'ontem', ultimo: 'último dia com dados', '7d': 'últimos 7 dias', mes: 'mês atual', custom: 'período personalizado' };
 function mostrarModo() {
   const m = $('modo'), p = state.periodo, hoje = p === 'hoje';
-  m.innerHTML = ''; m.className = 'modo ' + (hoje ? 'hoje' : 'hist');
+  // cor do alerta conforme a idade da última sincronização (Sincronismo!B2): até 30 min verde, 31–60 laranja, >60 vermelho
+  const ms = state.dados && state.dados.hojeAtualizadoMs, idade = ms ? (Date.now() - Number(ms)) / 60000 : null;
+  const nivel = idade == null || isNaN(idade) ? '' : idade <= 30 ? '' : idade <= 60 ? ' sync-warn' : ' sync-bad';
+  m.innerHTML = ''; m.className = 'modo ' + (hoje ? 'hoje' : 'hist') + (hoje ? nivel : '');
   m.appendChild(el('span', 'dot'));
   const mi = el('span', 'mi'); mi.innerHTML = ic('calcheck'); m.appendChild(mi);
   const t = el('div', 'mt');
   t.appendChild(el('b', '', hoje ? 'Produção de hoje' : 'Filtro: ' + (NOME_P[p] || p)));
   m.appendChild(t);
-  if (hoje) { const v = el('span', 'live'); v.innerHTML = ic('eye') + 'Ao vivo'; m.appendChild(v); return; }
+  if (hoje) { const v = el('span', 'live'); v.innerHTML = ic('eye') + 'Ao vivo' + (idade != null && !isNaN(idade) ? ' · há ' + (idade < 1 ? '<1' : idade < 60 ? Math.floor(idade) : Math.floor(idade / 60) + 'h' + String(Math.floor(idade % 60)).padStart(2, '0')) + (idade < 60 ? ' min' : '') : ''); m.appendChild(v); return; }
   const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
   b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
   m.appendChild(b);
@@ -549,7 +556,7 @@ function mostrarModo() {
 function render() {
   const d = state.dados; if (!d) return;
   // data/hora = última alteração da base de encerrados de hoje (campo hojeAtualizado); cai para d.atualizado se o script ainda não envia
-  $('atual').textContent = fmtStamp(d.hojeAtualizado) || d.atualizado || '--';
+  $('atual').textContent = fmtStamp(d.hojeAtualizadoMs || d.hojeAtualizado) || d.atualizado || '--';
   $('periodo').textContent = d.periodo
     ? (d.periodo.ini === d.periodo.fim ? d.periodo.rotulo : d.periodo.rotulo + ' (' + d.periodo.iniBR + ' a ' + d.periodo.fimBR + ')')
     : '';
@@ -677,6 +684,8 @@ $('maisBtn').onclick = () => {
   if (!d.hidden) d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 };
 $('refBtn').onclick = () => carregar();
+
+setInterval(() => { if (state.dados) mostrarModo(); }, 30000);
 
 /* ----- atualização automática ----- */
 setInterval(() => { if (!document.hidden && Date.now() - state.ultimaCarga > AUTO_MIN * 60000) carregar(); }, 30000);
