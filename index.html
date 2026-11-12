@@ -212,10 +212,12 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .loading .refbtn .i{animation:rot .9s linear infinite}
 .foot{display:flex;align-items:center;gap:10px;margin:22px 4px 0;padding-top:14px;border-top:2px solid transparent;border-image:linear-gradient(90deg,#ff8a1f,#2f7bff 60%,transparent) 1;font-style:italic;color:#dbe6ff;font-size:1rem}
 .foot .i{width:30px;height:30px;color:#ffa31a}.foot b{color:#ffa31a;font-weight:600}
+.modo.sync-warn{border-color:#ff9f1c;background:linear-gradient(100deg,#a85a00,#6b3a05 55%,#3d2203);box-shadow:0 0 18px rgba(255,159,28,.3);color:#ffe9c9}
 .modo.sync-warn .live{background:linear-gradient(180deg,#ffb347,#f08a00);box-shadow:0 0 14px rgba(255,159,28,.5)}
+.modo.sync-warn .dot{background:#ffb347;box-shadow:0 0 10px #ffb347;animation:none}
+.modo.sync-bad{border-color:#ff5a63;background:linear-gradient(100deg,#a8141f,#6b0e16 55%,#3d080d);box-shadow:0 0 18px rgba(255,90,99,.3);color:#ffd9dc}
 .modo.sync-bad .live{background:linear-gradient(180deg,#ff6b73,#d93a44);box-shadow:0 0 14px rgba(255,80,90,.5)}
-.modo.hoje.sync-warn .dot{background:#ff9f1c;animation:none}
-.modo.hoje.sync-bad .dot{background:var(--bad);animation:none}
+.modo.sync-bad .dot{background:#ff6b73;box-shadow:0 0 10px #ff6b73;animation:none}
 @media (max-width:420px){.stamp>.i{display:none}.icon-btn{width:40px;height:40px}.logo{width:30px;height:30px}.stamp{padding:6px 8px}.modo .mi .i{width:28px;height:28px}.modo .live{padding:6px 10px}}
 @media (min-width:521px){.grid{column-gap:6px;padding-inline:10px;grid-template-columns:minmax(110px,1.9fr) repeat(3,minmax(44px,.6fr)) minmax(48px,.7fr) minmax(60px,.9fr) minmax(120px,2fr) 14px}.pill{font-size:.78rem}.nome{font-size:.95rem}.thead{font-size:.78rem}}
 @media (prefers-reduced-motion:reduce){.loading .refbtn .i{animation:none}}
@@ -546,7 +548,7 @@ function mostrarModo() {
   const t = el('div', 'mt');
   t.appendChild(el('b', '', hoje ? 'Produção de hoje' : 'Filtro: ' + (NOME_P[p] || p)));
   m.appendChild(t);
-  if (hoje) { const v = el('span', 'live'); v.innerHTML = ic('eye') + 'Ao vivo' + (idade != null && !isNaN(idade) ? ' · há ' + (idade < 1 ? '<1' : idade < 60 ? Math.floor(idade) : Math.floor(idade / 60) + 'h' + String(Math.floor(idade % 60)).padStart(2, '0')) + (idade < 60 ? ' min' : '') : ''); m.appendChild(v); return; }
+  if (hoje) { const v = el('span', 'live'); v.innerHTML = ic('eye') + (idade != null && !isNaN(idade) ? 'há ' + (idade < 1 ? '<1' : idade < 60 ? Math.floor(idade) : Math.floor(idade / 60) + 'h' + String(Math.floor(idade % 60)).padStart(2, '0')) + (idade < 60 ? ' min' : '') : 'Ao vivo'); m.appendChild(v); return; }
   const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
   b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
   m.appendChild(b);
