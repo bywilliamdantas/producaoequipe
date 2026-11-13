@@ -294,6 +294,29 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .pf span{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .pf b{display:block;font-size:1rem;font-weight:600;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:reduce){.pl-btn.play{animation:none}}
+.cal-sec{margin-top:14px;padding:12px;border:1px solid var(--line-strong);border-radius:14px;background:rgba(47,123,255,.06)}
+.cal-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cal-top b{display:block;font-size:1rem}.cal-top span{display:block;font-size:.84rem;color:var(--muted)}
+.cal-top .btn{flex:none;height:38px;padding:0 14px}
+#calBody{margin-top:12px}
+.cal-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.cal-tab,.cal-q{height:38px;border-radius:10px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.cal-tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-nav b{font-size:1.02rem}
+.cal-n{width:40px;height:36px;border-radius:10px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);font-size:1.3rem;cursor:pointer}
+.cal-n:disabled{opacity:.3;cursor:default}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-w{text-align:center;font-size:.72rem;color:var(--muted);padding:2px 0}
+.cal-d{height:38px;border-radius:10px;border:1px solid transparent;background:rgba(140,165,215,.08);color:var(--ink);font:inherit;font-variant-numeric:tabular-nums;cursor:pointer}
+.cal-d.hj{border-color:var(--accent)}
+.cal-d.on,.cal-m.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.cal-d:disabled,.cal-m:disabled{opacity:.28;cursor:default}
+.cal-meses{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cal-m{height:44px;border-radius:10px;border:1px solid var(--line-strong);background:rgba(140,165,215,.08);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.cal-ac{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.cal-dica{margin:8px 0 0;font-size:.78rem;color:var(--muted)}
+#fForm{max-height:calc(100dvh - 32px);overflow-y:auto}
 </style>
 </head>
 <body>
@@ -405,10 +428,15 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
     <option value="7d">Últimos 7 dias</option>
     <option value="mes">Mês atual</option>
     <option value="custom">Personalizado</option>
+    <option value="cal">Produção mensal (calendário)</option>
   </select>
   <div id="fCustom" hidden>
     <label for="fIni">De</label><input id="fIni" type="date" class="ctl">
     <label for="fFim">Até</label><input id="fFim" type="date" class="ctl">
+  </div>
+  <div class="cal-sec" id="fCal">
+    <div class="cal-top"><div><b>Produção mensal</b><span id="calRes">Nenhuma seleção</span></div><button type="button" class="btn" id="calToggle">Abrir calendário</button></div>
+    <div id="calBody" hidden></div>
   </div>
   <label for="fSup" hidden>Supervisor</label>
   <select id="fSup" class="ctl" hidden><option value="">Todos</option></select>
@@ -452,9 +480,9 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <script>
 /* ============ CONFIGURAÇÃO ============ */
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbya6xY3g-fgFAReqRW3RYYulowxvNCcBH0pCyz5nQDuPm4PWMLQR6yZKGiWoJMd-3sz/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbw4X09EqJk6HHmQvSZhZHgWmlN-qlHDi_uoyvooT_WaiLuNOdi9GPcvTc9CKktszIpk/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbya6xY3g-fgFAReqRW3RYYulowxvNCcBH0pCyz5nQDuPm4PWMLQR6yZKGiWoJMd-3sz/exec';
+const URL_CSV = '';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -481,7 +509,7 @@ let SCRIPT_URL = URL_PADRAO;
 const urlValida = u => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
 
 const state = Object.assign(
-  { periodo: 'hoje', ini: '', fim: '', supervisor: '', ordem: 'sup' },
+  { periodo: 'hoje', ini: '', fim: '', cal: { dias: [], meses: [] }, supervisor: '', ordem: 'sup' },
   store.get(K.filtros, {})
 );
 state.busca = '';
@@ -490,6 +518,7 @@ state.codigo = store.get(K.codigo, '');
 state.login = String(store.get(K.sup, '') || '');
 state.supervisor = '';
 document.body.classList.toggle('sem-login', !state.login);
+if (state.periodo === 'cal' && !((state.cal.dias || []).length + (state.cal.meses || []).length)) state.periodo = 'hoje';
 state.dados = null;
 state.ultimaCarga = 0;
 let carregando = false;
@@ -558,6 +587,7 @@ async function carregar() {
 
   const q = new URLSearchParams({ periodo: state.periodo });
   if (state.periodo === 'custom' && state.ini && state.fim) { q.set('ini', state.ini); q.set('fim', state.fim); }
+  if (state.periodo === 'cal') { q.set('dias', state.cal.dias.join(',')); q.set('meses', state.cal.meses.join(',')); }
   if (state.codigo) q.set('codigo', state.codigo);
 
   try {
@@ -683,7 +713,7 @@ function corSup(nome) {
 }
 
 /* ----- faixa de contexto ----- */
-const NOME_P = { tudo: 'todo o período', ontem: 'ontem', ultimo: 'último dia com dados', '7d': 'últimos 7 dias', mes: 'mês atual', custom: 'período personalizado' };
+const NOME_P = { tudo: 'todo o período', ontem: 'ontem', ultimo: 'último dia com dados', '7d': 'últimos 7 dias', mes: 'mês atual', custom: 'período personalizado', cal: 'produção mensal' };
 function mostrarModo() {
   const m = $('modo'), p = state.periodo, hoje = p === 'hoje';
   // cor do alerta conforme a idade da última sincronização (Sincronismo!B2): até 30 min verde, 31–60 laranja, >60 vermelho
@@ -693,7 +723,7 @@ function mostrarModo() {
   m.appendChild(el('span', 'dot'));
   const mi = el('span', 'mi'); mi.innerHTML = ic('calcheck'); m.appendChild(mi);
   const t = el('div', 'mt');
-  t.appendChild(el('b', '', hoje ? 'Produção de hoje' : 'Filtro: ' + (NOME_P[p] || p)));
+  t.appendChild(el('b', '', hoje ? 'Produção de hoje' : 'Filtro: ' + (p === 'cal' && state.dados && state.dados.periodo ? state.dados.periodo.rotulo : (NOME_P[p] || p))));
   const dd = state.dados || {};
   const up = el('span', 'up');
   up.appendChild(document.createTextNode('Atualizado em '));
@@ -702,7 +732,7 @@ function mostrarModo() {
   m.appendChild(t);
   if (hoje) { const v = el('span', 'live'); v.innerHTML = ic('refresh') + (idade != null && !isNaN(idade) ? 'há ' + (idade < 1 ? '<1' : idade < 60 ? Math.floor(idade) : Math.floor(idade / 60) + 'h' + String(Math.floor(idade % 60)).padStart(2, '0')) + (idade < 60 ? ' min' : '') : 'Ao vivo'); m.appendChild(v); return; }
   const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
-  b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
+  b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', cal: state.cal, supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
   m.appendChild(b);
 }
 
@@ -830,31 +860,138 @@ $('tFechar').onclick = () => $('dlgTec').close();
 /* ----- busca ----- */
 $('busca').addEventListener('input', e => { state.busca = e.target.value; render(); });
 
+/* ----- Produção mensal (calendário: dias, meses ou ano inteiro) ----- */
+const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+const pad2 = n => String(n).padStart(2, '0');
+const isoD = (y, m, d) => y + '-' + pad2(m + 1) + '-' + pad2(d);      // m = 0..11
+const mesKey = (y, m) => y + '-' + pad2(m + 1);
+const _hj = new Date(), HY = _hj.getFullYear(), HM = _hj.getMonth(), HD = _hj.getDate();
+const diasNoMes = (y, m) => new Date(y, m + 1, 0).getDate();
+const futuroMes = (y, m) => y * 12 + m > HY * 12 + HM;
+const cal = { aberto: false, tab: 'dias', y: HY, m: HM, dias: new Set(), meses: new Set() };
+
+function diasDoMes(y, m) {                       // dias do mês até hoje (não existe produção no futuro)
+  const n = (y === HY && m === HM) ? HD : diasNoMes(y, m), r = [];
+  for (let d = 1; d <= n; d++) r.push(isoD(y, m, d));
+  return r;
+}
+const mesesDoAno = y => { const r = []; for (let m = 0; m < 12; m++) if (!futuroMes(y, m)) r.push(m); return r; };
+const diaSel = (y, m, d) => cal.dias.has(isoD(y, m, d)) || cal.meses.has(mesKey(y, m));
+
+function toggleDia(y, m, d) {
+  const k = mesKey(y, m);
+  if (cal.meses.has(k)) { cal.meses.delete(k); diasDoMes(y, m).forEach(i => cal.dias.add(i)); }   // abre o mês em dias para tirar só um
+  const i = isoD(y, m, d);
+  if (cal.dias.has(i)) cal.dias.delete(i); else cal.dias.add(i);
+}
+function setMes(y, m, on) {
+  const k = mesKey(y, m);
+  if (on) { cal.meses.add(k); diasDoMes(y, m).forEach(i => cal.dias.delete(i)); } else cal.meses.delete(k);
+}
+function toggleMes(y, m) { setMes(y, m, !cal.meses.has(mesKey(y, m))); }
+function toggleAno(y) {
+  const ms = mesesDoAno(y), todos = ms.every(m => cal.meses.has(mesKey(y, m)));
+  ms.forEach(m => setMes(y, m, !todos));
+}
+const calVazio = () => !cal.dias.size && !cal.meses.size;
+function calSerial() { return { dias: Array.from(cal.dias).sort(), meses: Array.from(cal.meses).sort() }; }
+
+function calResumo() {
+  const c = calSerial();
+  const avulsos = c.dias.filter(i => !c.meses.includes(i.slice(0, 7))).length;
+  const nm = c.meses.length, partes = [];
+  if (nm === 1) { const [y, m] = c.meses[0].split('-'); partes.push(MESES[+m - 1] + ' de ' + y); }
+  else if (nm > 1) {
+    const anos = Array.from(new Set(c.meses.map(k => k.slice(0, 4))));
+    partes.push(anos.length === 1 && nm === mesesDoAno(+anos[0]).length ? 'Ano ' + anos[0] : nm + ' meses');
+  }
+  if (avulsos) partes.push(avulsos + (avulsos === 1 ? ' dia' : ' dias'));
+  return partes.length ? partes.join(' + ') : 'Nenhuma seleção';
+}
+
+function calAtualiza() {
+  $('fPeriodo').value = 'cal';
+  calDesenhar();
+}
+function calDesenhar() {
+  $('calRes').textContent = calResumo();
+  $('calToggle').textContent = cal.aberto ? 'Fechar' : 'Abrir calendário';
+  const box = $('calBody'); box.hidden = !cal.aberto; box.innerHTML = '';
+  if (!cal.aberto) return;
+  const btn = (cls, txt, fn) => { const b = el('button', cls, txt); b.type = 'button'; b.onclick = fn; return b; };
+
+  const tabs = el('div', 'cal-tabs');
+  [['dias', 'Dias'], ['meses', 'Meses / Ano']].forEach(([k, t]) => tabs.appendChild(btn('cal-tab' + (cal.tab === k ? ' on' : ''), t, () => { cal.tab = k; calDesenhar(); })));
+  box.appendChild(tabs);
+
+  const dias = cal.tab === 'dias';
+  const nav = el('div', 'cal-nav');
+  const prev = btn('cal-n', '‹', () => { if (dias) { cal.m--; if (cal.m < 0) { cal.m = 11; cal.y--; } } else cal.y--; calDesenhar(); });
+  const next = btn('cal-n', '›', () => { if (dias) { cal.m++; if (cal.m > 11) { cal.m = 0; cal.y++; } } else cal.y++; calDesenhar(); });
+  prev.setAttribute('aria-label', 'Anterior'); next.setAttribute('aria-label', 'Próximo');
+  next.disabled = dias ? cal.y * 12 + cal.m >= HY * 12 + HM : cal.y >= HY;
+  nav.appendChild(prev); nav.appendChild(el('b', '', dias ? MESES[cal.m] + ' ' + cal.y : String(cal.y))); nav.appendChild(next);
+  box.appendChild(nav);
+
+  if (dias) {
+    const g = el('div', 'cal-grid');
+    ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(s => g.appendChild(el('span', 'cal-w', s)));
+    const ini = new Date(cal.y, cal.m, 1).getDay();
+    for (let i = 0; i < ini; i++) g.appendChild(el('span', 'cal-v'));
+    for (let d = 1; d <= diasNoMes(cal.y, cal.m); d++) {
+      const fut = futuroMes(cal.y, cal.m) || (cal.y === HY && cal.m === HM && d > HD);
+      const b = btn('cal-d' + (diaSel(cal.y, cal.m, d) ? ' on' : '') + (cal.y === HY && cal.m === HM && d === HD ? ' hj' : ''), String(d), () => { toggleDia(cal.y, cal.m, d); calAtualiza(); });
+      b.disabled = fut; g.appendChild(b);
+    }
+    box.appendChild(g);
+  } else {
+    const g = el('div', 'cal-meses');
+    for (let m = 0; m < 12; m++) {
+      const b = btn('cal-m' + (cal.meses.has(mesKey(cal.y, m)) ? ' on' : ''), MESES[m].slice(0, 3), () => { toggleMes(cal.y, m); calAtualiza(); });
+      b.title = MESES[m]; b.disabled = futuroMes(cal.y, m); g.appendChild(b);
+    }
+    box.appendChild(g);
+  }
+
+  const ac = el('div', 'cal-ac');
+  ac.appendChild(btn('cal-q', dias ? 'Mês inteiro' : 'Ano inteiro', () => { if (dias) toggleMes(cal.y, cal.m); else toggleAno(cal.y); calAtualiza(); }));
+  ac.appendChild(btn('cal-q', 'Limpar seleção', () => { cal.dias.clear(); cal.meses.clear(); calDesenhar(); }));
+  box.appendChild(ac);
+  box.appendChild(el('p', 'cal-dica', dias ? 'Toque nos dias para marcar vários. Navegue pelos meses para juntar dias de meses diferentes.' : 'Toque nos meses para marcar vários. Use as setas para trocar de ano.'));
+}
+$('calToggle').onclick = () => { cal.aberto = !cal.aberto; calDesenhar(); };
+
 /* ----- filtros ----- */
 function abrirFiltro() {
   $('fPeriodo').value = state.periodo;
   $('fIni').value = state.ini; $('fFim').value = state.fim;
   $('fCustom').hidden = state.periodo !== 'custom';
+  cal.dias = new Set((state.cal && state.cal.dias) || []); cal.meses = new Set((state.cal && state.cal.meses) || []);
+  cal.y = HY; cal.m = HM; cal.aberto = state.periodo === 'cal'; calDesenhar();
   $('fSup').value = state.supervisor;
   $('fOrd').value = state.ordem;
   $('dlgFiltro').showModal();
 }
 $('filtroBtn').onclick = abrirFiltro;
 $('fFechar').onclick = () => $('dlgFiltro').close();
-$('fPeriodo').onchange = () => { $('fCustom').hidden = $('fPeriodo').value !== 'custom'; };
+$('fPeriodo').onchange = () => { $('fCustom').hidden = $('fPeriodo').value !== 'custom'; if ($('fPeriodo').value === 'cal' && !cal.aberto) { cal.aberto = true; calDesenhar(); } };
 $('fLimpar').onclick = () => {
   $('fPeriodo').value = 'hoje'; $('fSup').value = ''; $('fOrd').value = 'sup';
   $('fCustom').hidden = true; $('fIni').value = ''; $('fFim').value = '';
+  cal.dias.clear(); cal.meses.clear(); cal.aberto = false; calDesenhar();
 };
 $('fForm').addEventListener('submit', () => {
-  const antes = state.periodo + state.ini + state.fim;
+  const sig = () => state.periodo + state.ini + state.fim + (state.periodo === 'cal' ? JSON.stringify(state.cal) : '');
+  const antes = sig();
   state.periodo = $('fPeriodo').value;
   state.ini = $('fIni').value; state.fim = $('fFim').value;
   if (state.periodo === 'custom' && (!state.ini || !state.fim)) state.periodo = 'hoje';
+  state.cal = calSerial();
+  if (state.periodo === 'cal' && calVazio()) state.periodo = 'hoje';
   state.supervisor = $('fSup').value;
   state.ordem = $('fOrd').value;
-  store.set(K.filtros, { periodo: state.periodo, ini: state.ini, fim: state.fim, supervisor: state.supervisor, ordem: state.ordem });
-  if (antes !== state.periodo + state.ini + state.fim) setTimeout(carregar, 0); else render();
+  store.set(K.filtros, { periodo: state.periodo, ini: state.ini, fim: state.fim, cal: state.cal, supervisor: state.supervisor, ordem: state.ordem });
+  if (antes !== sig()) setTimeout(carregar, 0); else render();
 });
 
 /* ----- mais detalhes e atualizar ----- */
