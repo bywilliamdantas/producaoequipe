@@ -276,8 +276,15 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .pl-btn.play .i{width:28px;height:28px}
 .pl-btn.play:active{transform:scale(.92)}
 @keyframes plpulso{50%{filter:drop-shadow(0 0 12px rgba(43,227,124,.95))}}
-.pl-ic.parado{color:#ffb020;opacity:.85}
-.pl-ic.vazio{color:#8fa2c8;opacity:.75}
+.pl-btn.parado{color:#ffb020;opacity:.9}
+.pl-btn.vazio{color:#8fa2c8;opacity:.8}
+.pl-btn:not(.play):active{transform:scale(.92)}
+.pcard.ag{border-color:var(--warn-line);background:linear-gradient(160deg,rgba(255,176,32,.12),rgba(255,176,32,.03))}
+.pcard.ag .live{color:#ffb62e}.pcard.ag .live i{background:#ffb020;box-shadow:0 0 8px #ffb020}
+.pvazio{margin-top:18px;padding:22px 14px;text-align:center;border:1px dashed var(--line-strong);border-radius:14px;color:var(--muted)}
+.pvazio .i{width:44px;height:44px;color:#8fa2c8;opacity:.85}
+.pvazio b{display:block;margin-top:8px;color:var(--ink);font-size:1.1rem}
+.pvazio p{margin:4px 0 0;font-size:.88rem}
 .pl-ic.na{color:var(--dim);font-size:1rem}
 .pcard{margin-top:14px;padding:12px 14px;border:1px solid var(--ok-line);border-radius:14px;background:linear-gradient(160deg,rgba(43,227,124,.12),rgba(43,227,124,.03))}
 .pcard .live{display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;font-size:.78rem;font-weight:700;color:#35ff8a;text-transform:uppercase;letter-spacing:.04em}
@@ -445,9 +452,9 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <script>
 /* ============ CONFIGURAÇÃO ============ */
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbw4X09EqJk6HHmQvSZhZHgWmlN-qlHDi_uoyvooT_WaiLuNOdi9GPcvTc9CKktszIpk/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbwVDVv7emcsrU3siYXjFDAERrZ5ecib1qFwhtJURfxTx2BWfjYDHMOd5ktQrCthBuI9/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbw4X09EqJk6HHmQvSZhZHgWmlN-qlHDi_uoyvooT_WaiLuNOdi9GPcvTc9CKktszIpk/exec';
+const URL_CSV = 'https://script.google.com/macros/s/AKfycbwVDVv7emcsrU3siYXjFDAERrZ5ecib1qFwhtJURfxTx2BWfjYDHMOd5ktQrCthBuI9/exec';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -620,35 +627,46 @@ function celula(valor, extra) {
 const PLAY_TXT = { parado: 'Agendado, ainda não iniciou', vazio: 'Nada agendado para este técnico', na: 'Base de abertos indisponível' };
 function celulaPlay(t) {
   const c = el('div', 'pl');
-  if (t.play === 'play') {
-    const b = el('button', 'pl-btn play'); b.type = 'button';
-    b.innerHTML = ic('play');
-    b.title = 'Em execução: ver atividade';
-    b.setAttribute('aria-label', tc(t.nome) + ' está em execução. Ver atividade');
+  if (t.play === 'play' || t.play === 'parado' || t.play === 'vazio') {
+    const rot = { play: 'Em execução: ver atividade', parado: 'Ver clientes agendados', vazio: 'Sem agendamentos' }[t.play];
+    const b = el('button', 'pl-btn ' + t.play); b.type = 'button';
+    b.innerHTML = ic(t.play === 'play' ? 'play' : t.play === 'vazio' ? 'ghost' : 'stop');
+    b.title = rot;
+    b.setAttribute('aria-label', tc(t.nome) + ': ' + rot);
     b.addEventListener('click', e => { e.stopPropagation(); abrirPlay(t); });
     b.addEventListener('keydown', e => e.stopPropagation());
     c.appendChild(b);
-  } else if (t.play === 'parado' || t.play === 'vazio') {
-    const s = el('span', 'pl-ic ' + t.play); s.innerHTML = ic(t.play === 'vazio' ? 'ghost' : 'stop');
-    s.title = PLAY_TXT[t.play]; s.setAttribute('role', 'img'); s.setAttribute('aria-label', PLAY_TXT[t.play]);
-    c.appendChild(s);
   } else {
     const s = el('span', 'pl-ic na', '–'); s.title = PLAY_TXT.na; c.appendChild(s);
   }
   return c;
 }
-function abrirPlay(t) {
-  $('pNome').textContent = tc(t.nome);
-  $('pSub').textContent = (t.supervisor ? 'Supervisor: ' + tc(t.supervisor) + ' · ' : '') + 'Na agenda: ' + (t.agenda || 0);
-  const box = $('pLista'); box.innerHTML = '';
-  (t.playItens || []).forEach(p => {
-    const card = el('div', 'pcard');
-    const lv = el('div', 'live'); lv.appendChild(el('i')); lv.appendChild(document.createTextNode('Em execução')); card.appendChild(lv);
-    [['Tipo', p.tipo], ['Protocolo', p.protocolo], ['Cliente', p.cliente], ['Cidade', p.cidade]].forEach(([k, v]) => {
-      const f = el('div', 'pf'); f.appendChild(el('span', '', k)); f.appendChild(el('b', '', v || '—')); card.appendChild(f);
-    });
-    box.appendChild(card);
+function cartaoOS(p, rotulo, extra) {
+  const card = el('div', 'pcard' + (extra ? ' ' + extra : ''));
+  const lv = el('div', 'live'); lv.appendChild(el('i')); lv.appendChild(document.createTextNode(rotulo)); card.appendChild(lv);
+  [['Tipo', p.tipo], ['Protocolo', p.protocolo], ['Cliente', p.cliente], ['Cidade', p.cidade]].forEach(([k, v]) => {
+    const f = el('div', 'pf'); f.appendChild(el('span', '', k)); f.appendChild(el('b', '', v || '—')); card.appendChild(f);
   });
+  return card;
+}
+function abrirPlay(t) {
+  const sup = t.supervisor ? 'Supervisor: ' + tc(t.supervisor) + ' · ' : '';
+  const box = $('pLista'); box.innerHTML = '';
+  $('pNome').textContent = tc(t.nome);
+  if (t.play === 'play') {
+    $('pSub').textContent = sup + 'Na agenda: ' + (t.agenda || 0);
+    (t.playItens || []).forEach(p => box.appendChild(cartaoOS(p, 'Em execução')));
+  } else if (t.play === 'parado') {
+    const l = t.agendaItens || [];
+    $('pSub').textContent = sup + 'Sem play · ' + l.length + (l.length === 1 ? ' agendado' : ' agendados');
+    l.forEach(p => box.appendChild(cartaoOS(p, 'Agendado', 'ag')));
+  } else {
+    $('pSub').textContent = sup + 'Sem demanda';
+    const v = el('div', 'pvazio'); v.innerHTML = ic('ghost');
+    v.appendChild(el('b', '', 'Sem agendamentos'));
+    v.appendChild(el('p', '', 'Este técnico não tem nenhuma demanda agendada.'));
+    box.appendChild(v);
+  }
   $('dlgPlay').showModal();
 }
 $('pFechar').onclick = () => $('dlgPlay').close();
@@ -745,10 +763,10 @@ function render() {
   // cartões e detalhes (seguem busca e filtro)
   const s = lista.reduce((a, t) => {
     a.concl += t.concl; a.inst += t.inst; a.pend += t.pend; a.outros += t.outros;
-    a.reabI += t.reabInst; a.reabP += t.reabPend; a.reabO += t.reabOutros; a.reabF += (t.reabFora || 0);
+    a.reabI += t.reabInst; a.reabP += t.reabPend; a.reabO += t.reabOutros;
     a.canc += t.cancel; a.atraso += t.atraso;
     a[t.nivel] = (a[t.nivel] || 0) + 1; return a;
-  }, { concl: 0, inst: 0, pend: 0, outros: 0, reabF: 0, reabI: 0, reabP: 0, reabO: 0, canc: 0, atraso: 0, atencao: 0, obs: 0, normal: 0, acima: 0 });
+  }, { concl: 0, inst: 0, pend: 0, outros: 0, reabI: 0, reabP: 0, reabO: 0, canc: 0, atraso: 0, atencao: 0, obs: 0, normal: 0, acima: 0 });
 
   $('kTec').textContent = lista.length;
   $('kPend').textContent = s.pend;
@@ -774,7 +792,6 @@ function render() {
   const dg = $('dgrid'); dg.innerHTML = '';
   const itens = [
     ['Instalação', s.inst], ['Reab. Inst.', s.reabI], ['Prest. de contas', s.outros], ['Reab. prest. contas', s.reabO],
-    ['Reaberturas (fora dos Concl.)', s.reabF],
     ['Cancelados', s.canc], ['Em atraso (SLA)', s.atraso],
     ['Em play agora', lista.filter(t => t.play === 'play').length],
     ['Agendados sem play', lista.filter(t => t.play === 'parado').length],
@@ -799,7 +816,6 @@ function abrirTecnico(t) {
   const dl = $('tDet'); dl.innerHTML = '';
   [['Concluídos', t.concl], ['Instalação', t.inst], ['Pendência', t.pend], ['Prest. de contas', t.outros],
    ['Reab. Instalação', t.reabInst], ['Reab. Pendência', t.reabPend], ['Reab. prest. contas', t.reabOutros],
-   ['Reaberturas (fora dos Concl.)', t.reabFora || 0],
    ['Cancelados', t.cancel], ['Concluídos em atraso', t.atraso],
    ['Na agenda (abertos)', t.play === 'na' ? '-' : (t.agenda || 0)]]
     .forEach(([k, v]) => { dl.appendChild(el('dt', '', k)); dl.appendChild(el('dd', '', String(v))); });
