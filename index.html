@@ -277,8 +277,10 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .pl-btn.play:active{transform:scale(.92)}
 @keyframes plpulso{50%{filter:drop-shadow(0 0 12px rgba(43,227,124,.95))}}
 .pl-btn.parado{color:#ffb020;opacity:.9}
+.pl-btn.fim{color:#6fb8ff;filter:drop-shadow(0 0 5px rgba(111,184,255,.55))}
 .pl-btn.vazio{color:#8fa2c8;opacity:.8}
 .pl-btn:not(.play):active{transform:scale(.92)}
+.pcard.fim{border-color:rgba(111,184,255,.5);background:linear-gradient(160deg,rgba(111,184,255,.12),rgba(111,184,255,.03))}
 .pcard.ag{border-color:var(--warn-line);background:linear-gradient(160deg,rgba(255,176,32,.12),rgba(255,176,32,.03))}
 .pcard.ag .live{color:#ffb62e}.pcard.ag .live i{background:#ffb020;box-shadow:0 0 8px #ffb020}
 .pvazio{margin-top:18px;padding:22px 14px;text-align:center;border:1px dashed var(--line-strong);border-radius:14px;color:var(--muted)}
@@ -521,6 +523,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor" stroke="none"/><path d="M10 8v8l6.5-4z" fill="#07102a" stroke="none"/></symbol>
 <symbol id="i-stop" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><rect x="9" y="9" width="6" height="6" rx="1.2" fill="currentColor" stroke="none"/></symbol>
 <symbol id="i-ghost" viewBox="0 0 24 24"><path d="M5 21V11a7 7 0 0 1 14 0v10l-3.5-2.4L12 21l-3.5-2.4z"/><path d="M9.5 11h.01M14.5 11h.01" stroke-width="3"/></symbol>
+<symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M7 3h10M7 21h10M8 3v4.2c0 1.3.6 2.5 1.7 3.3L12 12l-2.3 1.5A4 4 0 0 0 8 16.8V21M16 3v4.2c0 1.3-.6 2.5-1.7 3.3L12 12l2.3 1.5a4 4 0 0 1 1.7 3.3V21"/></symbol>
 <symbol id="i-stack" viewBox="0 0 24 24"><path d="M12 2.8l9.2 4.9-9.2 4.9-9.2-4.9z"/><path d="M2.8 12l9.2 4.9 9.2-4.9M2.8 16.3l9.2 4.9 9.2-4.9"/></symbol>
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5L12 3.5l9 8M5.5 10v10.5h4.5v-6h4v6h4.5V10"/></symbol>
 <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.6l1.9 4.9-2.4 1.6a11 11 0 0 0 5.4 5.4l1.6-2.4 4.9 1.9V19a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
@@ -544,7 +547,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
   <form class="lg-card" id="lgForm" autocomplete="off">
     <div class="lg-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
     <h1 id="lgTitulo">Produção Parcial</h1>
-    <p class="lg-sub">As informações registradas no sistema não representam valores oficialmente validados para fins de premiação.</p>
+    <p class="lg-sub">As informações em sistema NÃO são valores validados para premiação</p>
     <div class="lg-field">
       <label for="lgSup"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Supervisor</label>
       <select id="lgSup" class="lg-sel" required disabled><option value="">Carregando…</option></select>
@@ -582,7 +585,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
   </div>
 
   <section class="kpis" aria-label="Resumo">
-    <div class="kpi"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><b id="kTec">0</b><span>Técnicos</span></div>
+    <div class="kpi"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><b id="kTec">0</b><span>Ativos</span></div>
     <div class="kpi warn"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg><b id="kPend">0</b><span>Pendências</span></div>
     <div class="kpi inst"><svg class="i" aria-hidden="true"><use href="#i-bars"/></svg><b id="kInst">0</b><span>Instalações</span></div>
     <div class="kpi ok"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><b id="kConcl">0</b><span>Concluídos</span></div>
@@ -695,6 +698,7 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
     <option value="atencao">Atenção primeiro</option>
     <option value="reab">Mais reaberturas</option>
     <option value="nome">Nome (A a Z)</option>
+    <option value="play">Play (A a Z)</option>
   </select>
   <div class="actions">
     <button type="button" class="btn" id="fFechar">Fechar</button>
@@ -738,9 +742,9 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <script>
 /* ============ CONFIGURAÇÃO ============ */
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbwzJAYFXcpc5-RM04AHjJfjEdk3wsVd4HABUjl8C6EOe9uU49QsA7AL6FO4s-KKMhsp/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbwI2a9CVl2KDnDbNu_5NIaVd-Ogfcvlwn4bhcxy0IZ9d9VXPS3zGZcbgvbRgr239gLY/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbwzJAYFXcpc5-RM04AHjJfjEdk3wsVd4HABUjl8C6EOe9uU49QsA7AL6FO4s-KKMhsp/exec';
+const URL_CSV = 'https://script.google.com/macros/s/AKfycbwI2a9CVl2KDnDbNu_5NIaVd-Ogfcvlwn4bhcxy0IZ9d9VXPS3zGZcbgvbRgr239gLY/exec';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -896,7 +900,10 @@ function listaVisivel() {
     if (!x !== !y) return x ? -1 : 1;            // sem supervisor vai para o fim
     return x.localeCompare(y, 'pt-BR');
   };
+  // Play: agrupa por situação (▶ em play, ■ agendado, ⏳ terminou, 👻 fantasma) e, dentro de cada grupo, A a Z
+  const ordPlay = { play: 0, parado: 1, fim: 2, vazio: 3, na: 4 };
   l = l.slice().sort((a, c) =>
+    o === 'play' ? ((ordPlay[a.play] ?? 9) - (ordPlay[c.play] ?? 9)) || nm(a, c) :
     o === 'sup' ? sp(a, c) || (c.concl - a.concl) || nm(a, c) :
     o === 'nome' ? nm(a, c) :
     o === 'atencao' ? (ordNivel[a.nivel] - ordNivel[c.nivel]) || (a.concl - c.concl) || nm(a, c) :
@@ -911,14 +918,14 @@ function celula(valor, extra) {
 }
 
 /* ----- Play (aba Base_Abertos) ----- */
-// ▶ em execução · ■ agendado, ainda não iniciou · 👻 nada agendado no nome dele
-const PLAY_TXT = { parado: 'Agendado, ainda não iniciou', vazio: 'Nada agendado para este técnico', na: 'Base de abertos indisponível' };
+// ▶ em execução · ■ agendado, ainda não iniciou · ⏳ sem agenda mas já concluiu · 👻 sem agenda e sem conclusão
+const PLAY_TXT = { parado: 'Agendado, ainda não iniciou', fim: 'Agenda concluída', vazio: 'Nada agendado para este técnico', na: 'Base de abertos indisponível' };
 function celulaPlay(t) {
   const c = el('div', 'pl');
-  if (t.play === 'play' || t.play === 'parado' || t.play === 'vazio') {
-    const rot = { play: 'Em execução: ver atividade', parado: 'Ver clientes agendados', vazio: 'Sem agendamentos' }[t.play];
+  if (t.play === 'play' || t.play === 'parado' || t.play === 'fim' || t.play === 'vazio') {
+    const rot = { play: 'Em execução: ver atividade', parado: 'Ver clientes agendados', fim: 'Agenda concluída', vazio: 'Sem agendamentos e sem conclusões' }[t.play];
     const b = el('button', 'pl-btn ' + t.play); b.type = 'button';
-    b.innerHTML = ic(t.play === 'play' ? 'play' : t.play === 'vazio' ? 'ghost' : 'stop');
+    b.innerHTML = ic({ play: 'play', fim: 'hourglass', vazio: 'ghost' }[t.play] || 'stop');
     b.title = rot;
     b.setAttribute('aria-label', tc(t.nome) + ': ' + rot);
     b.addEventListener('click', e => { e.stopPropagation(); abrirPlay(t); });
@@ -948,11 +955,17 @@ function abrirPlay(t) {
     const l = t.agendaItens || [];
     $('pSub').textContent = sup + 'Sem play · ' + l.length + (l.length === 1 ? ' agendado' : ' agendados');
     l.forEach(p => box.appendChild(cartaoOS(p, 'Agendado', 'ag')));
+  } else if (t.play === 'fim') {
+    $('pSub').textContent = sup + 'Concluídos: ' + (t.concl || 0);
+    const v = el('div', 'pvazio'); v.innerHTML = ic('hourglass');
+    v.appendChild(el('b', '', 'Agenda concluída'));
+    v.appendChild(el('p', '', 'Já encerrou OS e não tem mais nada agendado.'));
+    box.appendChild(v);
   } else {
     $('pSub').textContent = sup + 'Sem demanda';
     const v = el('div', 'pvazio'); v.innerHTML = ic('ghost');
     v.appendChild(el('b', '', 'Sem agendamentos'));
-    v.appendChild(el('p', '', 'Este técnico não tem nenhuma demanda agendada.'));
+    v.appendChild(el('p', '', 'Sem nada agendado e nenhuma OS concluída.'));
     box.appendChild(v);
   }
   $('dlgPlay').showModal();
@@ -1056,12 +1069,14 @@ function render() {
     a[t.nivel] = (a[t.nivel] || 0) + 1; return a;
   }, { concl: 0, inst: 0, pend: 0, outros: 0, reabI: 0, reabP: 0, reabO: 0, canc: 0, atraso: 0, atencao: 0, obs: 0, normal: 0, acima: 0 });
 
-  $('kTec').textContent = lista.length;
+  // técnicos ativos: com OS agendada (Hoje) ou que já encerraram alguma OS; ausentes não entram na contagem nem na meta
+  const nAtivos = lista.filter(t => t.ativo !== false).length;
+  $('kTec').textContent = nAtivos;
   $('kPend').textContent = s.pend;
   $('kInst').textContent = s.inst;
   $('kConcl').textContent = s.concl;
   // filtro Hoje: o cartão enche de baixo para cima (meta = técnicos ativos x 5); demais filtros: verde cheio
-  const kc = $('kConcl').parentElement, meta = lista.length * 5;
+  const kc = $('kConcl').parentElement, meta = nAtivos * 5;
   kc.classList.toggle('prog', state.periodo === 'hoje');
   // Gap: começa em -(técnicos x 5) vermelho cheio; esvazia para preto conforme os concluídos sobem; na meta = 0; acima = +excedente com troféu
   const gc = $('kGapCard'), gv = $('kGap');
@@ -1083,9 +1098,11 @@ function render() {
     ['Cancelados', s.canc], ['Em atraso (SLA)', s.atraso],
     ['Em play agora', lista.filter(t => t.play === 'play').length],
     ['Agendados sem play', lista.filter(t => t.play === 'parado').length],
-    ['Sem agenda', lista.filter(t => t.play === 'vazio').length],
+    ['Agenda concluída', lista.filter(t => t.play === 'fim').length],
+    ['Sem agenda e sem conclusão', lista.filter(t => t.play === 'vazio').length],
+    ['Técnicos ativos / total', nAtivos + ' / ' + lista.length],
     ['Em atenção', s.atencao], ['Em observação', s.obs], ['Normal', s.normal], ['Acima', s.acima],
-    ['Média por técnico', lista.length ? (s.concl / lista.length).toFixed(1).replace('.', ',') : '0'],
+    ['Média por técnico ativo', nAtivos ? (s.concl / nAtivos).toFixed(1).replace('.', ',') : '0'],
     ['Meta Normal (período)', d.metas ? String(d.metas.normal).replace('.', ',') : '-'],
     ['Meta Observação (período)', d.metas ? String(d.metas.obs).replace('.', ',') : '-']
   ];
@@ -1443,7 +1460,7 @@ async function carregarBacklog() {
 /* ----- banner de atualização ----- */
 function blModo() {
   const m = $('bModo'), d = bl.dados; if (!d) return;
-  // mesma régua da produção: até 30 min verde, 31 a 60 laranja, acima de 60 vermelho (se Sincronismo!A2 existir)
+  // mesma régua da produção: até 30 min verde, 31 a 60 laranja, acima de 60 vermelho (se Sincronismo!B1 existir)
   const ms = d.abertosAtualizadoMs, idade = ms ? (Date.now() - Number(ms)) / 60000 : null;
   const nivel = idade == null || isNaN(idade) ? '' : idade <= 30 ? '' : idade <= 60 ? ' sync-warn' : ' sync-bad';
   m.innerHTML = ''; m.className = 'modo hoje' + nivel;
