@@ -738,9 +738,9 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <script>
 /* ============ CONFIGURAÇÃO ============ */
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbywuAeCzc6refOLZZgVEMULMzz2g7nQoFZsuZYpa8HcrYx0WPNJ5C-YX_E6fBOHoHtu/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbyDJIVxicffGmp_bLVTdQaX3Tmb-2I3jpYAVvkkGfLpFx6_-fugkUadR5cpUvnI_r6U/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbywuAeCzc6refOLZZgVEMULMzz2g7nQoFZsuZYpa8HcrYx0WPNJ5C-YX_E6fBOHoHtu/exec';
+const URL_CSV = 'https://script.google.com/macros/s/AKfycbyDJIVxicffGmp_bLVTdQaX3Tmb-2I3jpYAVvkkGfLpFx6_-fugkUadR5cpUvnI_r6U/exec';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -1443,7 +1443,7 @@ async function carregarBacklog() {
 /* ----- banner de atualização ----- */
 function blModo() {
   const m = $('bModo'), d = bl.dados; if (!d) return;
-  // mesma régua da produção: até 30 min verde, 31 a 60 laranja, acima de 60 vermelho (se Sincronismo!B1 existir)
+  // mesma régua da produção: até 30 min verde, 31 a 60 laranja, acima de 60 vermelho (se Sincronismo!A2 existir)
   const ms = d.abertosAtualizadoMs, idade = ms ? (Date.now() - Number(ms)) / 60000 : null;
   const nivel = idade == null || isNaN(idade) ? '' : idade <= 30 ? '' : idade <= 60 ? ' sync-warn' : ' sync-bad';
   m.innerHTML = ''; m.className = 'modo hoje' + nivel;
