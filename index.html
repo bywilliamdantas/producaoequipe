@@ -231,6 +231,9 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 @property --fill{syntax:'<percentage>';inherits:true;initial-value:0%}
 .kpi.ok.prog{background:linear-gradient(0deg,rgba(20,200,120,.95) var(--fill),rgba(20,200,120,0) var(--fill));transition:--fill .8s ease}
 .kpis{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.kpis.k6{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
+.kpis.k6 .kpi span{font-size:clamp(.5rem,2.3vw,.78rem)}
+.kpi.plk{--k:0,190,150}
 .kpi{padding:10px 1px 8px;border-radius:13px}
 .kpi .i{width:22px;height:22px}
 .kpi b,.kpi.ok b,.kpi.warn b,.kpi.bad b{font-size:clamp(1.15rem,5.2vw,1.9rem)}
@@ -342,6 +345,9 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .bwrap{max-width:1040px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 8px calc(env(safe-area-inset-bottom,0px) + 32px)}
 @media(min-width:521px){.bwrap{padding-inline:14px}}
 #blk .logo svg{overflow:visible}
+.icon-btn.bfiltbtn{position:relative}
+.icon-btn.bfiltbtn.on{border-color:var(--warn-line)}
+.icon-btn.bfiltbtn.on::after{content:"";position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--warn)}
 
 /* ===== cartões por empresa ===== */
 .emps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
@@ -677,10 +683,11 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
     </button>
   </div>
 
-  <section class="kpis" aria-label="Resumo">
+  <section class="kpis k6" aria-label="Resumo">
     <div class="kpi"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><b id="kTec">0</b><span>Ativos</span></div>
     <div class="kpi warn"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg><b id="kPend">0</b><span>Pendências</span></div>
     <div class="kpi inst"><svg class="i" aria-hidden="true"><use href="#i-bars"/></svg><b id="kInst">0</b><span>Instalações</span></div>
+    <div class="kpi plk"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg><b id="kPlay">0</b><span>Play</span></div>
     <div class="kpi ok"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><b id="kConcl">0</b><span>Concluídos</span></div>
     <div class="kpi gap" id="kGapCard"><svg class="i" id="kGapIcon" aria-hidden="true"><use href="#i-gap"/></svg><b id="kGap">0</b><span>Gap</span></div>
   </section>
@@ -719,6 +726,7 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
       <div><h1>Backlog</h1><p id="bSub">OS abertas</p></div>
     </div>
     <button class="icon-btn refbtn" id="bRef" aria-label="Atualizar dados"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+    <button class="icon-btn bfiltbtn" id="bFiltBtn" aria-label="Filtrar por supervisor" title="Filtrar por supervisor"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></button>
     <button class="icon-btn" id="bHome" aria-label="Voltar" title="Voltar"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></button>
   </header>
 
@@ -800,6 +808,18 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
   </div>
 </form></dialog>
 
+<!-- Filtro do Backlog (supervisor) -->
+<dialog id="dlgBFiltro"><form method="dialog" class="dlg" id="bfForm">
+  <h2>Filtrar backlog</h2><p class="sub">Veja o backlog apenas das OS dos técnicos de uma equipe.</p>
+  <label for="bfSup">Supervisor</label>
+  <select id="bfSup" class="ctl"><option value="">Todos</option></select>
+  <div class="actions">
+    <button type="button" class="btn" id="bfFechar">Fechar</button>
+    <button type="button" class="btn" id="bfLimpar">Limpar</button>
+    <button type="submit" class="btn pri" value="ok">Aplicar</button>
+  </div>
+</form></dialog>
+
 <!-- Detalhe do técnico -->
 <dialog id="dlgTec"><div class="dlg">
   <h2 id="tNome"></h2><p class="sub" id="tSup"></p><span class="chip" id="tChip"></span>
@@ -837,9 +857,9 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
 // URL anterior (guardada para reverter, se precisar):
 // https://script.google.com/macros/s/AKfycbw4X09EqJk6HHmQvSZhZHgWmlN-qlHDi_uoyvooT_WaiLuNOdi9GPcvTc9CKktszIpk/exec
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbzhVKeccRUfmPp5vLG4E5GUXEqSvWEodc_gUp-tHMLr34V_Ycr5o9q_lgEKwpKhF2OE/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycby-aY3DlWEb4nnkV256mKbjnHJGxPWQZ31GW1RYAAwJdzFxDdsPCC85hF_Q2hVYNnUX/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbzhVKeccRUfmPp5vLG4E5GUXEqSvWEodc_gUp-tHMLr34V_Ycr5o9q_lgEKwpKhF2OE/exec';
+const URL_CSV = 'https://script.google.com/macros/s/AKfycby-aY3DlWEb4nnkV256mKbjnHJGxPWQZ31GW1RYAAwJdzFxDdsPCC85hF_Q2hVYNnUX/exec';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -1209,6 +1229,8 @@ function render() {
   $('kTec').textContent = nAtivos;
   $('kPend').textContent = s.pend;
   $('kInst').textContent = s.inst;
+  // atividades em play agora (OS com em_play = Sim dos técnicos visíveis)
+  $('kPlay').textContent = lista.reduce((a, t) => a + (t.playItens ? t.playItens.length : 0), 0);
   $('kConcl').textContent = s.concl;
   // filtro Hoje: o cartão enche de baixo para cima (meta = técnicos ativos x 5); demais filtros: verde cheio
   const kc = $('kConcl').parentElement, meta = nAtivos * 5;
@@ -1431,7 +1453,7 @@ function loginErro(msg) {
   sel.innerHTML = '<option value="">Indisponível</option>'; sel.disabled = true; $('lgBtn').disabled = true;
   m.className = 'lg-msg erro'; m.textContent = msg || 'Não foi possível carregar.';
   const b = el('button', 'lg-retry', 'Tentar de novo'); b.type = 'button';
-  b.onclick = () => { m.className = 'lg-msg'; m.textContent = 'Carregando…'; carregar(); };
+  b.onclick = () => { m.className = 'lg-msg'; m.textContent = ''; carregar(); };
   m.appendChild(document.createElement('br')); m.appendChild(b);
 }
 $('lgSup').onchange = () => { $('lgBtn').disabled = !$('lgSup').value; };
@@ -1448,7 +1470,7 @@ function sair(msg) {
   state.busca = ''; $('busca').value = '';
   document.body.classList.add('sem-login');
   loginPopular(msg, !!msg);
-  if (!state.dados) { $('lgMsg').textContent = 'Carregando…'; carregar(); }
+  if (!state.dados) carregar();
 }
 $('sairBtn').onclick = () => sair();
 
@@ -1474,7 +1496,8 @@ const ST_H = { 'abertura': 215, 'andamento': 160, 'agendado': 190, 'reagendado':
 
 const bl = Object.assign({ emp: 'GERAL', ordem: 'atraso' }, store.get(BL_K, {}));
 Object.assign(bl, { f: {}, busca: '', limite: 30, verCid: false, dados: null, itens: [], cidN: {}, ultima: 0, carregando: false, now: Date.now() });
-const blSalvar = () => store.set(BL_K, { emp: bl.emp, ordem: bl.ordem });
+const blSalvar = () => store.set(BL_K, { emp: bl.emp, ordem: bl.ordem, sup: bl.f.sup || '' });
+if (store.get(BL_K, {}).sup) bl.f.sup = String(store.get(BL_K, {}).sup);
 const emBacklog = () => document.body.classList.contains('v-blk');
 const pct1 = n => n.toFixed(1).replace('.', ',') + '%';
 const hueDe = (s, mapa) => { const k = semAcento(s); if (mapa && mapa[k] != null) return mapa[k]; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return (h * 47) % 360; };
@@ -1516,6 +1539,7 @@ const BLP = {
   st: (x, v) => x.stN === v,
   cid: (x, v) => x.cidK === v,
   ag: (x, v) => agBucket(x) === v,
+  sup: (x, v) => x.sup === v,
   sit: (x, v) => v === 'atraso' ? !!x.atr : v === 'play' ? !!x.play : v === 'fila' ? !!x.fila : true
 };
 function blFiltrar(skip, semEmp) {
@@ -1617,11 +1641,35 @@ function blRender() {
   const d = bl.dados; if (!d) return;
   bl.now = Date.now();
   if (blEmpresas().indexOf(bl.emp) < 0) bl.emp = 'GERAL';
-  $('bSub').textContent = (bl.emp === 'GERAL' ? 'Todas as empresas' : empNome(bl.emp)) + ' · ' + bl.itens.length + ' OS abertas';
+  // supervisor salvo que não existe mais: remove o filtro
+  if (bl.f.sup && blSupervisores().indexOf(bl.f.sup) < 0) bl.f.sup = '';
+  const totEmp = bl.itens.filter(x => (bl.emp === 'GERAL' || x.emp === bl.emp) && (!bl.f.sup || x.sup === bl.f.sup)).length;
+  $('bSub').textContent = (bl.emp === 'GERAL' ? 'Todas as empresas' : empNome(bl.emp)) + (bl.f.sup ? ' · ' + tc(bl.f.sup) : '') + ' · ' + totEmp + ' OS abertas';
+  $('bFiltBtn').classList.toggle('on', !!bl.f.sup);
+  blSalvar();
   blEmps(); blKpis(); blChips(); blStrip();
   blTipo(); blStatus(); blAging(); blCidades(); blMatriz(); blLista(); blModo();
   $('bOrdem').value = bl.ordem;
 }
+
+/* ----- filtro de supervisor do Backlog ----- */
+function blSupervisores() {
+  const d = bl.dados && bl.dados.supervisores;
+  const l = Array.isArray(d) && d.length ? d : Array.from(new Set(bl.itens.map(x => x.sup).filter(Boolean)));
+  return l.slice().sort((a, b) => a.localeCompare(b, 'pt-BR'));
+}
+$('bFiltBtn').onclick = () => {
+  const sel = $('bfSup'); sel.innerHTML = '<option value="">Todos</option>';
+  blSupervisores().forEach(s => { const o = el('option', '', tc(s)); o.value = s; sel.appendChild(o); });
+  sel.value = bl.f.sup || '';
+  $('dlgBFiltro').showModal();
+};
+$('bfFechar').onclick = () => $('dlgBFiltro').close();
+$('bfLimpar').onclick = () => { $('bfSup').value = ''; };
+$('bfForm').addEventListener('submit', () => {
+  bl.f.sup = $('bfSup').value; bl.limite = 30;
+  setTimeout(blRender, 0);
+});
 
 function blEmps() {
   const base = blFiltrar(null, true), box = $('bEmps'); box.innerHTML = '';
@@ -1673,7 +1721,7 @@ function blChips() {
 }
 
 function facetaNome(k, v) {
-  return k === 'cat' ? catDe(v).n : k === 'st' ? v : k === 'cid' ? (bl.cidN[v] || v) : k === 'ag' ? 'Atraso: ' + AGB[+v].n : SIT_N[v] || v;
+  return k === 'cat' ? catDe(v).n : k === 'st' ? v : k === 'cid' ? (bl.cidN[v] || v) : k === 'ag' ? 'Atraso: ' + AGB[+v].n : k === 'sup' ? 'Supervisor: ' + tc(v) : SIT_N[v] || v;
 }
 function limparTudo() {
   bl.f = {}; bl.busca = ''; $('bBusca').value = ''; bl.limite = 30; blRender();
@@ -1917,7 +1965,7 @@ function fecharBacklog() {
   document.body.classList.remove('v-blk'); store.set(K.view, '');
   window.scrollTo(0, 0);
   if (state.dados) render();
-  else { if (!state.login) $('lgMsg').textContent = 'Carregando…'; carregar(); }
+  else carregar();
 }
 $('lgBlk').onclick = abrirBacklog;
 $('blkBtn').onclick = abrirBacklog;
@@ -1938,7 +1986,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 if (store.get(K.view, '') === 'blk') { document.body.classList.add('v-blk'); carregarBacklog(); }
-else { if (!state.login) $('lgMsg').textContent = 'Carregando…'; carregar(); }
+else carregar();
 </script>
 </body>
 </html>
