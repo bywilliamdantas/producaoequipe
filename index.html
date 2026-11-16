@@ -593,6 +593,41 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
   body.m-desk .modo{padding:10px 16px;margin-bottom:12px}
 }
 </style>
+<style id="css-acesso">
+/* login: campos */
+.lg-field + .lg-field{margin-top:14px}
+.lg-inp{width:100%;height:52px;padding:0 16px;border-radius:16px;border:1.5px solid var(--line-strong);background:linear-gradient(180deg,#0f1f45,#091329);color:#fff;font:inherit;font-size:1rem;font-weight:600;box-shadow:0 0 12px rgba(47,123,255,.15)}
+.lg-inp::placeholder{color:#6f84b3;font-weight:500}
+.lg-inp:focus{outline:0;border-color:#4f8cff;box-shadow:0 0 0 3px rgba(79,140,255,.25)}
+.lg-pw{position:relative}
+.lg-pw .lg-inp{padding-right:54px}
+.lg-eye{position:absolute;right:6px;top:6px;width:40px;height:40px;border:0;border-radius:12px;background:transparent;color:#9cc0ff;display:grid;place-items:center;cursor:pointer}
+.lg-eye .i{width:22px;height:22px}
+.lg-eye.on{color:#ffb35c}
+/* botão Salvar credenciais (mesmo formato do Entrar, em laranja) */
+.lg-acts .lg-btn.sv{flex:1.35 1 0;white-space:normal;line-height:1.05;font-size:.95rem;background:linear-gradient(180deg,#ff9a2e,#d9620b);box-shadow:0 0 20px rgba(255,138,31,.5);text-shadow:0 1px 2px rgba(80,25,0,.45)}
+.lg-acts .lg-btn.sv:focus-visible{outline-color:#ffd2a0}
+.lg-acts .lg-btn.sv.on{box-shadow:0 0 0 2px rgba(255,214,170,.9),0 0 26px rgba(255,138,31,.75)}
+.lg-acts .lg-btn.sv.on .i{color:#fff}
+.lg-acts .lg-btn:first-child{flex:1 1 0}
+.lg-msg.ok{color:#7be6a6}
+/* perfis */
+.p-tec .wrap .tools .search,.p-tec #bFiltBtn,.p-tec #bChips .chp[data-s="fila"]{display:none}
+.p-tec .wrap .tools{justify-content:flex-end}
+.p-tec .wrap .tools .filter-btn{flex:1}
+/* filtro com seleção múltipla */
+.mlabel{display:block;margin:14px 0 6px;font-size:.88rem;font-weight:500;color:var(--muted)}
+.msel{display:grid;gap:4px;max-height:236px;overflow-y:auto;padding:6px;border:1px solid var(--line-strong);border-radius:12px;background:var(--bg)}
+.mopt{display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:6px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--ink);font:inherit;font-size:.95rem;text-align:left;cursor:pointer}
+.mopt:hover{background:rgba(79,140,255,.1)}
+.mopt .mbox{flex:none;width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line-strong);display:grid;place-items:center;color:transparent;background:#0b1530}
+.mopt .mbox .i{width:15px;height:15px;stroke-width:3.2}
+.mopt.on{background:rgba(47,123,255,.16);border-color:rgba(79,140,255,.5)}
+.mopt.on .mbox{background:linear-gradient(180deg,#4f9bff,#2362e0);border-color:#4f9bff;color:#fff}
+.mopt.todos{font-weight:600;margin-bottom:2px}
+.mhint{margin:6px 2px 0;font-size:.78rem;color:var(--muted)}
+@media(max-width:340px){.lg-acts{flex-direction:column}.lg-acts .lg-btn.sv{flex:none}}
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -640,20 +675,31 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
 <symbol id="i-login" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 8l4 4-4 4M14 12H3"/></symbol>
 <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M8.5 20.5h7M12 16.5v4"/></symbol>
 <symbol id="i-mobile" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M11 18.5h2"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="currentColor" stroke="none"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2.2"/></symbol>
+<symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7c2 0 3.8.8 5.3 1.9M22 12s-4 7-10 7c-2 0-3.8-.8-5.3-1.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M4 4l16 16"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></symbol>
+<symbol id="i-tick" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></symbol>
 </defs></svg>
 <div id="login" role="dialog" aria-labelledby="lgTitulo">
-  <form class="lg-card" id="lgForm" autocomplete="off">
+  <form class="lg-card" id="lgForm" novalidate>
     <div class="lg-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
     <h1 id="lgTitulo">Produção Parcial</h1>
     <p class="lg-sub">As informações registradas no sistema não representam valores oficialmente validados para fins de premiação.</p>
     <div class="lg-field">
-      <label for="lgSup"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Supervisor</label>
-      <select id="lgSup" class="lg-sel" required disabled><option value="">Carregando…</option></select>
+      <label for="lgUser"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Login</label>
+      <input id="lgUser" class="lg-inp" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="seu.login" required>
+    </div>
+    <div class="lg-field">
+      <label for="lgPass"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>Senha</label>
+      <div class="lg-pw">
+        <input id="lgPass" class="lg-inp" type="password" autocomplete="current-password" autocapitalize="none" placeholder="Sua senha" required>
+        <button type="button" class="lg-eye" id="lgEye" aria-label="Mostrar senha" title="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg></button>
+      </div>
     </div>
     <div class="lg-acts">
       <button type="submit" class="lg-btn" id="lgBtn" disabled><svg class="i" aria-hidden="true"><use href="#i-login"/></svg>Entrar</button>
-      <button type="button" class="lg-btn blk" id="lgBlk"><svg class="i" aria-hidden="true"><use href="#i-stack"/></svg>Backlog</button>
+      <button type="button" class="lg-btn sv" id="lgSave" aria-pressed="false" title="Guardar login e senha neste aparelho para entrar direto"><svg class="i" aria-hidden="true"><use href="#i-save"/></svg><span>Salvar credenciais</span></button>
     </div>
     <p class="lg-msg" id="lgMsg" aria-live="polite"></p>
     <div class="lg-foot">© 2026 William Dantas</div>
@@ -723,7 +769,7 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
   <header class="top">
     <div class="brand">
       <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8l9.2 4.9-9.2 4.9-9.2-4.9z" stroke="#ff8a1f" stroke-width="2.2"/><path d="M2.8 12l9.2 4.9 9.2-4.9M2.8 16.3l9.2 4.9 9.2-4.9" stroke="#3b9bff" stroke-width="2.4"/></svg></div>
-      <div><h1>Backlog</h1><p id="bSub">OS abertas</p></div>
+      <div><h1 id="bTitulo">Backlog</h1><p id="bSub">OS abertas</p></div>
     </div>
     <button class="icon-btn refbtn" id="bRef" aria-label="Atualizar dados"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg></button>
     <button class="icon-btn bfiltbtn" id="bFiltBtn" aria-label="Filtrar por supervisor" title="Filtrar por supervisor"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></button>
@@ -790,8 +836,11 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
     <div class="cal-top"><div><b>Produção mensal</b><span id="calRes">Nenhuma seleção</span></div><button type="button" class="btn" id="calToggle">Abrir calendário</button></div>
     <div id="calBody" hidden></div>
   </div>
-  <label for="fSup" hidden>Supervisor</label>
-  <select id="fSup" class="ctl" hidden><option value="">Todos</option></select>
+  <div id="fSupWrap" hidden>
+    <div class="mlabel" id="fSupLbl">Supervisores</div>
+    <div class="msel" id="fSupBox" role="group" aria-labelledby="fSupLbl"></div>
+    <p class="mhint">Marque uma, várias ou todas as equipes.</p>
+  </div>
   <label for="fOrd">Ordenar por</label>
   <select id="fOrd" class="ctl">
     <option value="sup">Supervisor (A a Z) + mais concluídos</option>
@@ -810,9 +859,9 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
 
 <!-- Filtro do Backlog (supervisor) -->
 <dialog id="dlgBFiltro"><form method="dialog" class="dlg" id="bfForm">
-  <h2>Filtrar backlog</h2><p class="sub">Veja o backlog apenas das OS dos técnicos de uma equipe.</p>
-  <label for="bfSup">Supervisor</label>
-  <select id="bfSup" class="ctl"><option value="">Todos</option></select>
+  <h2>Filtrar backlog</h2><p class="sub">Veja o backlog apenas das OS dos técnicos das equipes marcadas.</p>
+  <div class="mlabel" id="bfLbl">Supervisores</div>
+  <div class="msel" id="bfBox" role="group" aria-labelledby="bfLbl"></div>
   <div class="actions">
     <button type="button" class="btn" id="bfFechar">Fechar</button>
     <button type="button" class="btn" id="bfLimpar">Limpar</button>
@@ -857,9 +906,9 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
 // URL anterior (guardada para reverter, se precisar):
 // https://script.google.com/macros/s/AKfycbw4X09EqJk6HHmQvSZhZHgWmlN-qlHDi_uoyvooT_WaiLuNOdi9GPcvTc9CKktszIpk/exec
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycby-aY3DlWEb4nnkV256mKbjnHJGxPWQZ31GW1RYAAwJdzFxDdsPCC85hF_Q2hVYNnUX/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbx9N0eGQJ3TiKdAw35X_ygGnmbyCaBGfqNzNRtfSc8rBqMI55_GnENWLT5TiqJPzJma/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycby-aY3DlWEb4nnkV256mKbjnHJGxPWQZ31GW1RYAAwJdzFxDdsPCC85hF_Q2hVYNnUX/exec';
+const URL_CSV = 'https://script.google.com/macros/s/AKfycbx9N0eGQJ3TiKdAw35X_ygGnmbyCaBGfqNzNRtfSc8rBqMI55_GnENWLT5TiqJPzJma/exec';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -878,9 +927,10 @@ function fmtStamp(v) {
 }
 const store = {
   get(k, fb) { try { const v = localStorage.getItem(k); return v === null ? fb : JSON.parse(v); } catch (_) { return fb; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (_) {} }
 };
-const K = { filtros: 'dp_filtros_v4', codigo: 'dp_codigo', url: 'dp_url', sup: 'dp_supervisor', view: 'dp_view' };
+const K = { filtros: 'dp_filtros_v4', codigo: 'dp_codigo', url: 'dp_url', view: 'dp_view', cred: 'dp_cred', auto: 'dp_auto', sess: 'dp_sessao' };
 
 /* ----- modo de visualização automático -----
    Desktop = tela larga (>= 900px) com mouse/trackpad, ou com altura >= 620px (tablets e notebooks touch).
@@ -897,15 +947,21 @@ let SCRIPT_URL = URL_PADRAO;
 const urlValida = u => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
 
 const state = Object.assign(
-  { periodo: 'hoje', ini: '', fim: '', cal: { dias: [], meses: [] }, supervisor: '', ordem: 'sup' },
+  { periodo: 'hoje', ini: '', fim: '', cal: { dias: [], meses: [] }, ordem: 'sup' },
   store.get(K.filtros, {})
 );
 state.busca = '';
 state.codigo = store.get(K.codigo, '');
-// supervisor que fez "login" neste aparelho (salvo localmente); o filtro de supervisor antigo deixa de ser usado
-state.login = String(store.get(K.sup, '') || '');
-state.supervisor = '';
-document.body.classList.toggle('sem-login', !state.login);
+/* credenciais da sessão: sessionStorage (vale até fechar a aba) ou, se "Salvar credenciais" estiver ativo, o aparelho lembra e entra direto */
+function lerCredenciais() {
+  try { const o = JSON.parse(sessionStorage.getItem(K.sess) || 'null'); if (o && o.login && o.senha) return o; } catch (_) {}
+  const c = store.get(K.cred, null);
+  return c && c.login && c.senha && store.get(K.auto, true) ? { login: c.login, senha: c.senha } : null;
+}
+state.cred = lerCredenciais();     // { login, senha } ou null
+state.user = null;                 // { papel: tecnico | supervisor | coordenador, nome, supervisor, coordenador }
+state.sups = [];                   // equipes marcadas no filtro (chaves sem acento); vazio = todas
+document.body.classList.toggle('sem-login', !state.cred);
 if (state.periodo === 'cal' && !((state.cal.dias || []).length + (state.cal.meses || []).length)) state.periodo = 'hoje';
 state.dados = null;
 state.ultimaCarga = 0;
@@ -913,7 +969,31 @@ let carregando = false;
 
 /* ----- utilidades ----- */
 const semAcento = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const nk = s => semAcento(s).trim().replace(/\s+/g, ' ');
 const MIN = new Set(['de', 'da', 'do', 'das', 'dos', 'e']);
+const papel = () => (state.user && state.user.papel) || '';
+const ehTec = () => papel() === 'tecnico';
+const PAPEL_N = { tecnico: 'Técnico', supervisor: 'Supervisor', coordenador: 'Coordenador' };
+const supsPadrao = () => papel() === 'supervisor' && state.user.supervisor ? [nk(state.user.supervisor)] : [];
+const mesmoSet = (a, b) => a.length === b.length && a.slice().sort().join('|') === b.slice().sort().join('|');
+const supKey = () => 'dp_sups_' + nk(state.cred ? state.cred.login : '');
+// nomes bonitos a partir das chaves selecionadas
+function supResumo(chaves, lista) {
+  const nomes = (chaves || []).map(k => { const f = (lista || []).find(n => nk(n) === k); return tc(f || k); });
+  return nomes.length <= 2 ? nomes.join(', ') : nomes.length + ' equipes';
+}
+function definirUsuario(u) {
+  if (!u) return;
+  const ant = state.user, mudou = !ant || ant.nome !== u.nome || ant.papel !== u.papel;
+  state.user = u;
+  ['p-tec', 'p-sup', 'p-coord'].forEach(c => document.body.classList.remove(c));
+  document.body.classList.add({ tecnico: 'p-tec', supervisor: 'p-sup', coordenador: 'p-coord' }[u.papel] || 'p-sup');
+  if (!mudou) return;
+  const sv = store.get(supKey(), null);
+  state.sups = u.papel === 'tecnico' ? [] : (Array.isArray(sv) ? sv : supsPadrao());
+  if (ant || u.papel === 'tecnico') bl.f.sup = '';
+  if (ant) { bl.dados = null; bl.itens = []; }
+}
 const tc = s => String(s || '').toLowerCase().replace(/(^|\s)(\S)(\S*)/g, (m, a, b, c) => a + (a && MIN.has(b + c) ? b + c : b.toUpperCase() + c));
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -959,7 +1039,7 @@ function esqueleto() {
 }
 
 async function carregar() {
-  if (carregando) return;
+  if (carregando || !state.cred) return;
   carregando = true;
   document.body.classList.add('loading');
   if (!state.dados) esqueleto();
@@ -977,18 +1057,21 @@ async function carregar() {
   if (state.periodo === 'custom' && state.ini && state.fim) { q.set('ini', state.ini); q.set('fim', state.fim); }
   if (state.periodo === 'cal') { q.set('dias', state.cal.dias.join(',')); q.set('meses', state.cal.meses.join(',')); }
   if (state.codigo) q.set('codigo', state.codigo);
+  q.set('login', state.cred.login); q.set('senha', state.cred.senha);
 
   try {
     const j = await pedir(SCRIPT_URL + '?' + q.toString());
+    if (j && j.login) { carregando = false; document.body.classList.remove('loading'); sair('Sessão inválida. Entre novamente.'); return; }
     if (j && j.auth) { carregando = false; document.body.classList.remove('loading'); pedirCodigo(j.error); return; }
     if (!j || !j.ok) throw new Error((j && j.error) || 'Resposta inválida.');
+    if (!j.usuario) throw new Error('O Apps Script ainda está na versão antiga. Cole o novo Code.gs e publique uma nova versão da implantação.');
+    definirUsuario(j.usuario);
     state.dados = j;
     state.ultimaCarga = Date.now();
     render();
   } catch (e) {
     $('rows').innerHTML = state.dados ? $('rows').innerHTML : '';
     const abortou = e && e.name === 'AbortError';
-    if (!state.login && !state.dados) loginErro(abortou ? 'A conexão demorou demais.' : 'Não foi possível carregar os supervisores.');
     aviso(abortou ? 'A conexão demorou demais.'
       : (e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Não foi possível carregar os dados.'),
       'erro', true);
@@ -1017,7 +1100,7 @@ function listaVisivel() {
   const d = state.dados; if (!d) return [];
   const b = semAcento(state.busca).trim();
   let l = d.tecnicos.filter(t =>
-    (!b || semAcento(t.nome).includes(b)) && (!state.login || t.supervisor === state.login));
+    (!b || semAcento(t.nome).includes(b)) && (ehTec() || !state.sups.length || state.sups.includes(nk(t.supervisor))));
   const ordNivel = { atencao: 0, obs: 1, normal: 2, acima: 3 };
   const nm = (a, c) => a.nome.localeCompare(c.nome, 'pt-BR');
   const o = state.ordem;
@@ -1152,7 +1235,7 @@ function mostrarModo() {
   m.appendChild(t);
   if (hoje) { const v = el('span', 'live'); v.innerHTML = ic('refresh') + (idade != null && !isNaN(idade) ? 'há ' + (idade < 1 ? '<1' : idade < 60 ? Math.floor(idade) : Math.floor(idade / 60) + 'h' + String(Math.floor(idade % 60)).padStart(2, '0')) + (idade < 60 ? ' min' : '') : 'Ao vivo'); m.appendChild(v); return; }
   const b = el('button', '', 'Voltar para hoje'); b.type = 'button';
-  b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', cal: state.cal, supervisor: state.supervisor, ordem: state.ordem }); carregar(); };
+  b.onclick = () => { state.periodo = 'hoje'; state.ini = ''; state.fim = ''; store.set(K.filtros, { periodo: 'hoje', ini: '', fim: '', cal: state.cal, ordem: state.ordem }); carregar(); };
   m.appendChild(b);
 }
 
@@ -1168,19 +1251,19 @@ function render() {
     ? (d.periodo.ini === d.periodo.fim ? d.periodo.rotulo : d.periodo.rotulo + ' (' + d.periodo.iniBR + ' a ' + d.periodo.fimBR + ')')
     : '';
 
-  // supervisor salvo que não existe mais na lista: volta para a tela de login
-  if (state.login && (d.supervisores || []).length && !d.supervisores.includes(state.login)) { sair('Seu supervisor não foi encontrado. Selecione novamente.'); return; }
-  loginPopular();
-  if (state.login) $('subtitulo').textContent = 'Supervisor: ' + tc(state.login);
+  // identificação de quem está logado (+ equipes em exibição, quando não for só a própria)
+  if (state.user) {
+    const existentes = (d.supervisores || []).map(nk);
+    if (existentes.length) state.sups = state.sups.filter(k => existentes.includes(k));
+    let sub = PAPEL_N[state.user.papel] + ': ' + tc(state.user.nome);
+    if (!ehTec()) {
+      if (!state.sups.length) sub += ' · Todas as equipes';
+      else if (!mesmoSet(state.sups, supsPadrao())) sub += ' · ' + supResumo(state.sups, d.supervisores);
+    }
+    $('subtitulo').textContent = sub;
+  }
 
   mostrarModo();
-
-  // supervisores no filtro
-  const sel = $('fSup'); const atual = state.supervisor;
-  sel.innerHTML = '<option value="">Todos</option>';
-  (d.supervisores || []).forEach(s => { const o = el('option', '', tc(s)); o.value = s; sel.appendChild(o); });
-  sel.value = (d.supervisores || []).includes(atual) ? atual : '';
-  if (sel.value !== atual) state.supervisor = '';
 
   if (d.baseVazia) aviso('A aba Encerramentos ainda não tem dados. Importe o relatório de encerrados.', 'info');
   else aviso('');
@@ -1188,7 +1271,7 @@ function render() {
   const lista = listaVisivel();
   const rows = $('rows'); rows.innerHTML = '';
   if (!lista.length) {
-    rows.appendChild(el('div', 'vazio', state.busca || state.login ? 'Nenhum técnico encontrado.' : 'Nenhum técnico cadastrado.'));
+    rows.appendChild(el('div', 'vazio', state.busca || state.sups.length ? 'Nenhum técnico encontrado.' : 'Nenhum técnico cadastrado.'));
   }
   lista.forEach(t => {
     const r = el('div', 'grid row ' + t.nivel);
@@ -1265,7 +1348,7 @@ function render() {
   ];
   itens.forEach(([k, v]) => { const x = el('div'); x.appendChild(el('span', '', k)); x.appendChild(el('b', '', String(v))); dg.appendChild(x); });
 
-  $('filtroBtn').classList.toggle('on', state.periodo !== 'hoje' || !!state.supervisor || state.ordem !== 'sup');
+  $('filtroBtn').classList.toggle('on', state.periodo !== 'hoje' || !mesmoSet(state.sups, supsPadrao()) || state.ordem !== 'sup');
 }
 
 /* ----- detalhe do técnico ----- */
@@ -1393,6 +1476,29 @@ function calDesenhar() {
 }
 $('calToggle').onclick = () => { cal.aberto = !cal.aberto; calDesenhar(); };
 
+/* ----- seleção múltipla de equipes (vazio = todas) ----- */
+function mselDesenhar(box, lista, sel) {
+  box.innerHTML = '';
+  const opt = (txt, on, fn, cls) => {
+    const b = el('button', 'mopt' + (on ? ' on' : '') + (cls ? ' ' + cls : '')); b.type = 'button';
+    b.setAttribute('role', 'checkbox'); b.setAttribute('aria-checked', String(on));
+    const bx = el('span', 'mbox'); bx.innerHTML = ic('tick'); b.appendChild(bx);
+    b.appendChild(el('span', '', txt));
+    b.onclick = () => { fn(); mselDesenhar(box, lista, sel); };
+    return b;
+  };
+  box.appendChild(opt('Todos', !sel.size, () => sel.clear(), 'todos'));
+  lista.forEach(n => {
+    const k = nk(n);
+    box.appendChild(opt(tc(n), sel.has(k), () => {
+      if (sel.has(k)) sel.delete(k); else sel.add(k);
+      if (sel.size >= lista.length) sel.clear();
+    }));
+  });
+}
+let fSupSel = new Set(), bfSel = new Set();
+const listaSups = () => ((state.dados && state.dados.supervisores) || []).slice().sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
 /* ----- filtros ----- */
 function abrirFiltro() {
   $('fPeriodo').value = state.periodo;
@@ -1400,7 +1506,8 @@ function abrirFiltro() {
   $('fCustom').hidden = state.periodo !== 'custom';
   cal.dias = new Set((state.cal && state.cal.dias) || []); cal.meses = new Set((state.cal && state.cal.meses) || []);
   cal.y = HY; cal.m = HM; cal.aberto = state.periodo === 'cal'; calDesenhar();
-  $('fSup').value = state.supervisor;
+  $('fSupWrap').hidden = ehTec();
+  fSupSel = new Set(state.sups); mselDesenhar($('fSupBox'), listaSups(), fSupSel);
   $('fOrd').value = state.ordem;
   $('dlgFiltro').showModal();
 }
@@ -1408,7 +1515,8 @@ $('filtroBtn').onclick = abrirFiltro;
 $('fFechar').onclick = () => $('dlgFiltro').close();
 $('fPeriodo').onchange = () => { $('fCustom').hidden = $('fPeriodo').value !== 'custom'; if ($('fPeriodo').value === 'cal' && !cal.aberto) { cal.aberto = true; calDesenhar(); } };
 $('fLimpar').onclick = () => {
-  $('fPeriodo').value = 'hoje'; $('fSup').value = ''; $('fOrd').value = 'sup';
+  $('fPeriodo').value = 'hoje'; $('fOrd').value = 'sup';
+  fSupSel = new Set(supsPadrao()); mselDesenhar($('fSupBox'), listaSups(), fSupSel);
   $('fCustom').hidden = true; $('fIni').value = ''; $('fFim').value = '';
   cal.dias.clear(); cal.meses.clear(); cal.aberto = false; calDesenhar();
 };
@@ -1420,9 +1528,9 @@ $('fForm').addEventListener('submit', () => {
   if (state.periodo === 'custom' && (!state.ini || !state.fim)) state.periodo = 'hoje';
   state.cal = calSerial();
   if (state.periodo === 'cal' && calVazio()) state.periodo = 'hoje';
-  state.supervisor = $('fSup').value;
+  if (!ehTec()) { state.sups = Array.from(fSupSel); store.set(supKey(), state.sups); }
   state.ordem = $('fOrd').value;
-  store.set(K.filtros, { periodo: state.periodo, ini: state.ini, fim: state.fim, cal: state.cal, supervisor: state.supervisor, ordem: state.ordem });
+  store.set(K.filtros, { periodo: state.periodo, ini: state.ini, fim: state.fim, cal: state.cal, ordem: state.ordem });
   if (antes !== sig()) setTimeout(carregar, 0); else render();
 });
 
@@ -1434,43 +1542,82 @@ $('maisBtn').onclick = () => {
 };
 $('refBtn').onclick = () => carregar();
 
-/* ----- login por supervisor ----- */
-function loginPopular(msg, erro) {
-  const sel = $('lgSup'), btn = $('lgBtn'), m = $('lgMsg');
-  const lista = ((state.dados && state.dados.supervisores) || []).slice().sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  const atual = sel.value;
-  sel.innerHTML = '';
-  const o0 = el('option', '', lista.length ? 'Selecione o supervisor' : 'Nenhum supervisor encontrado'); o0.value = ''; sel.appendChild(o0);
-  lista.forEach(s => { const o = el('option', '', tc(s)); o.value = s; sel.appendChild(o); });
-  sel.value = lista.includes(atual) ? atual : '';
-  sel.disabled = !lista.length;
-  btn.disabled = !sel.value;
-  m.className = 'lg-msg' + (erro ? ' erro' : '');
-  m.textContent = msg || '';
+/* ----- login (usuário + senha) ----- */
+let lembrar = false;   // botão "Salvar credenciais"
+function loginMsg(msg, tipo) { const m = $('lgMsg'); m.className = 'lg-msg' + (tipo ? ' ' + tipo : ''); m.textContent = msg || ''; }
+function loginAtualizar() {
+  const b = $('lgSave');
+  b.classList.toggle('on', lembrar); b.setAttribute('aria-pressed', String(lembrar));
+  b.querySelector('use').setAttribute('href', lembrar ? '#i-check' : '#i-save');
+  $('lgBtn').disabled = !($('lgUser').value.trim() && $('lgPass').value);
 }
-function loginErro(msg) {
-  const sel = $('lgSup'), m = $('lgMsg');
-  sel.innerHTML = '<option value="">Indisponível</option>'; sel.disabled = true; $('lgBtn').disabled = true;
-  m.className = 'lg-msg erro'; m.textContent = msg || 'Não foi possível carregar.';
-  const b = el('button', 'lg-retry', 'Tentar de novo'); b.type = 'button';
-  b.onclick = () => { m.className = 'lg-msg'; m.textContent = ''; carregar(); };
-  m.appendChild(document.createElement('br')); m.appendChild(b);
+function loginPreencher() {
+  const c = store.get(K.cred, null);
+  $('lgUser').value = c ? c.login : ''; $('lgPass').value = c ? c.senha : '';
+  lembrar = !!(c && c.login && c.senha);
+  loginAtualizar();
 }
-$('lgSup').onchange = () => { $('lgBtn').disabled = !$('lgSup').value; };
-$('lgForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const v = $('lgSup').value; if (!v) return;
-  state.login = v; store.set(K.sup, v);
+['lgUser', 'lgPass'].forEach(id => $(id).addEventListener('input', loginAtualizar));
+$('lgEye').onclick = () => {
+  const p = $('lgPass'), ver = p.type === 'password';
+  p.type = ver ? 'text' : 'password';
+  $('lgEye').classList.toggle('on', ver);
+  $('lgEye').querySelector('use').setAttribute('href', ver ? '#i-eyeoff' : '#i-eye');
+  $('lgEye').setAttribute('aria-label', ver ? 'Ocultar senha' : 'Mostrar senha');
+};
+$('lgSave').onclick = () => {
+  if (lembrar) {
+    lembrar = false; store.del(K.cred); loginAtualizar();
+    loginMsg('Credenciais removidas deste aparelho.');
+    return;
+  }
+  const login = $('lgUser').value.trim(), senha = $('lgPass').value;
+  if (!login || !senha) { loginMsg('Preencha login e senha para salvar.', 'erro'); return; }
+  lembrar = true; store.set(K.cred, { login, senha }); store.set(K.auto, true); loginAtualizar();
+  loginMsg('Credenciais salvas neste aparelho.', 'ok');
+};
+function entrar(cred, usuario) {
+  state.cred = cred;
+  try { sessionStorage.setItem(K.sess, JSON.stringify(cred)); } catch (_) {}
+  if (lembrar) { store.set(K.cred, cred); store.set(K.auto, true); }
+  definirUsuario(usuario);
+  loginMsg('');
   document.body.classList.remove('sem-login');
   window.scrollTo(0, 0);
-  if (state.dados) render(); else carregar();
+  carregar();
+}
+$('lgForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const login = $('lgUser').value.trim(), senha = $('lgPass').value;
+  if (!login || !senha) return;
+  $('lgBtn').disabled = true; loginMsg('Verificando…');
+  try {
+    await resolverUrl();
+    if (!urlValida(SCRIPT_URL)) throw new Error('Falta configurar a URL do Apps Script no arquivo index.html.');
+    const j = await pedir(SCRIPT_URL + '?' + new URLSearchParams({ acao: 'login', login: login, senha: senha }).toString(), 30000);
+    if (!j || !j.ok) {
+      if (lembrar) { lembrar = false; store.del(K.cred); }   // não deixa guardada uma credencial recusada
+      loginMsg((j && j.error) || 'Login ou senha inválidos.', 'erro'); return;
+    }
+    if (!j.usuario) throw new Error('O Apps Script ainda está na versão antiga. Cole o novo Code.gs e publique uma nova versão da implantação.');
+    entrar({ login: login, senha: senha }, j.usuario);
+  } catch (err) {
+    const abortou = err && err.name === 'AbortError';
+    loginMsg(abortou ? 'A conexão demorou demais. Tente de novo.' : (err && err.message && err.message !== 'Failed to fetch' ? err.message : 'Não foi possível conectar. Tente de novo.'), 'erro');
+  } finally { loginAtualizar(); }
 });
 function sair(msg) {
-  state.login = ''; store.set(K.sup, '');
-  state.busca = ''; $('busca').value = '';
+  try { sessionStorage.removeItem(K.sess); } catch (_) {}
+  store.set(K.auto, false);            // não entra sozinho de novo; se houver credenciais salvas, elas voltam preenchidas
+  state.cred = null; state.user = null; state.dados = null; state.sups = [];
+  state.busca = ''; $('busca').value = ''; $('rows').innerHTML = ''; aviso('');
+  bl.dados = null; bl.itens = []; bl.f = {}; bl.busca = '';
+  ['v-blk', 'p-tec', 'p-sup', 'p-coord'].forEach(c => document.body.classList.remove(c));
+  store.set(K.view, '');
   document.body.classList.add('sem-login');
-  loginPopular(msg, !!msg);
-  if (!state.dados) carregar();
+  loginPreencher();
+  if (msg) loginMsg(msg, 'erro');
+  window.scrollTo(0, 0);
 }
 $('sairBtn').onclick = () => sair();
 
@@ -1497,7 +1644,7 @@ const ST_H = { 'abertura': 215, 'andamento': 160, 'agendado': 190, 'reagendado':
 const bl = Object.assign({ emp: 'GERAL', ordem: 'atraso' }, store.get(BL_K, {}));
 Object.assign(bl, { f: {}, busca: '', limite: 30, verCid: false, dados: null, itens: [], cidN: {}, ultima: 0, carregando: false, now: Date.now() });
 const blSalvar = () => store.set(BL_K, { emp: bl.emp, ordem: bl.ordem, sup: bl.f.sup || '' });
-if (store.get(BL_K, {}).sup) bl.f.sup = String(store.get(BL_K, {}).sup);
+{ const sv = store.get(BL_K, {}).sup; if (Array.isArray(sv) && sv.length) bl.f.sup = sv; }
 const emBacklog = () => document.body.classList.contains('v-blk');
 const pct1 = n => n.toFixed(1).replace('.', ',') + '%';
 const hueDe = (s, mapa) => { const k = semAcento(s); if (mapa && mapa[k] != null) return mapa[k]; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return (h * 47) % 360; };
@@ -1539,7 +1686,7 @@ const BLP = {
   st: (x, v) => x.stN === v,
   cid: (x, v) => x.cidK === v,
   ag: (x, v) => agBucket(x) === v,
-  sup: (x, v) => x.sup === v,
+  sup: (x, v) => Array.isArray(v) ? v.includes(nk(x.sup)) : nk(x.sup) === nk(v),
   sit: (x, v) => v === 'atraso' ? !!x.atr : v === 'play' ? !!x.play : v === 'fila' ? !!x.fila : true
 };
 function blFiltrar(skip, semEmp) {
@@ -1582,7 +1729,7 @@ function blEsqueleto() {
   for (let i = 0; i < 5; i++) { const s = el('div', 'skelb'); if (i === 0) s.style.gridColumn = '1/-1'; $('bEmps').appendChild(s); }
 }
 async function carregarBacklog() {
-  if (bl.carregando) return;
+  if (bl.carregando || !state.cred) return;
   bl.carregando = true;
   document.body.classList.add('loading');
   if (!bl.dados) blEsqueleto();
@@ -1596,11 +1743,14 @@ async function carregarBacklog() {
   }
   const q = new URLSearchParams({ pagina: 'backlog' });
   if (state.codigo) q.set('codigo', state.codigo);
+  q.set('login', state.cred.login); q.set('senha', state.cred.senha);
   try {
     const j = await pedir(SCRIPT_URL + '?' + q.toString(), 60000);
+    if (j && j.login) { bl.carregando = false; document.body.classList.remove('loading'); sair('Sessão inválida. Entre novamente.'); return; }
     if (j && j.auth) { bl.carregando = false; document.body.classList.remove('loading'); pedirCodigo(j.error); return; }
     if (!j || !j.ok) throw new Error((j && j.error) || 'Resposta inválida.');
     if (!Array.isArray(j.itens)) throw new Error('O Apps Script ainda está na versão antiga. Cole o novo Code.gs e publique uma nova versão da implantação.');
+    if (j.usuario) definirUsuario(j.usuario);
     bl.dados = j;
     bl.itens = j.itens.map(blPrep);
     bl.cidN = {}; bl.itens.forEach(x => { bl.cidN[x.cidK] = x.cidN; });
@@ -1642,9 +1792,12 @@ function blRender() {
   bl.now = Date.now();
   if (blEmpresas().indexOf(bl.emp) < 0) bl.emp = 'GERAL';
   // supervisor salvo que não existe mais: remove o filtro
-  if (bl.f.sup && blSupervisores().indexOf(bl.f.sup) < 0) bl.f.sup = '';
-  const totEmp = bl.itens.filter(x => (bl.emp === 'GERAL' || x.emp === bl.emp) && (!bl.f.sup || x.sup === bl.f.sup)).length;
-  $('bSub').textContent = (bl.emp === 'GERAL' ? 'Todas as empresas' : empNome(bl.emp)) + (bl.f.sup ? ' · ' + tc(bl.f.sup) : '') + ' · ' + totEmp + ' OS abertas';
+  if (bl.f.sup) { const ok = blSupervisores().map(nk), f = (Array.isArray(bl.f.sup) ? bl.f.sup : [nk(bl.f.sup)]).filter(k => ok.includes(k)); bl.f.sup = f.length ? f : ''; }
+  const totEmp = bl.itens.filter(x => (bl.emp === 'GERAL' || x.emp === bl.emp) && (!bl.f.sup || BLP.sup(x, bl.f.sup))).length;
+  $('bTitulo').textContent = ehTec() ? 'Minhas OS' : 'Backlog';
+  $('bSub').textContent = ehTec()
+    ? 'Agendadas para você' + (bl.emp === 'GERAL' ? '' : ' · ' + empNome(bl.emp)) + ' · ' + totEmp + ' OS'
+    : (bl.emp === 'GERAL' ? 'Todas as empresas' : empNome(bl.emp)) + (bl.f.sup ? ' · ' + supResumo(bl.f.sup, blSupervisores()) : '') + ' · ' + totEmp + ' OS abertas';
   $('bFiltBtn').classList.toggle('on', !!bl.f.sup);
   blSalvar();
   blEmps(); blKpis(); blChips(); blStrip();
@@ -1659,15 +1812,14 @@ function blSupervisores() {
   return l.slice().sort((a, b) => a.localeCompare(b, 'pt-BR'));
 }
 $('bFiltBtn').onclick = () => {
-  const sel = $('bfSup'); sel.innerHTML = '<option value="">Todos</option>';
-  blSupervisores().forEach(s => { const o = el('option', '', tc(s)); o.value = s; sel.appendChild(o); });
-  sel.value = bl.f.sup || '';
+  bfSel = new Set(Array.isArray(bl.f.sup) ? bl.f.sup : []);
+  mselDesenhar($('bfBox'), blSupervisores(), bfSel);
   $('dlgBFiltro').showModal();
 };
 $('bfFechar').onclick = () => $('dlgBFiltro').close();
-$('bfLimpar').onclick = () => { $('bfSup').value = ''; };
+$('bfLimpar').onclick = () => { bfSel.clear(); mselDesenhar($('bfBox'), blSupervisores(), bfSel); };
 $('bfForm').addEventListener('submit', () => {
-  bl.f.sup = $('bfSup').value; bl.limite = 30;
+  bl.f.sup = bfSel.size ? Array.from(bfSel) : ''; bl.limite = 30;
   setTimeout(blRender, 0);
 });
 
@@ -1721,7 +1873,7 @@ function blChips() {
 }
 
 function facetaNome(k, v) {
-  return k === 'cat' ? catDe(v).n : k === 'st' ? v : k === 'cid' ? (bl.cidN[v] || v) : k === 'ag' ? 'Atraso: ' + AGB[+v].n : k === 'sup' ? 'Supervisor: ' + tc(v) : SIT_N[v] || v;
+  return k === 'cat' ? catDe(v).n : k === 'st' ? v : k === 'cid' ? (bl.cidN[v] || v) : k === 'ag' ? 'Atraso: ' + AGB[+v].n : k === 'sup' ? 'Equipe: ' + supResumo(v, blSupervisores()) : SIT_N[v] || v;
 }
 function limparTudo() {
   bl.f = {}; bl.busca = ''; $('bBusca').value = ''; bl.limite = 30; blRender();
@@ -1967,7 +2119,6 @@ function fecharBacklog() {
   if (state.dados) render();
   else carregar();
 }
-$('lgBlk').onclick = abrirBacklog;
 $('blkBtn').onclick = abrirBacklog;
 $('bHome').onclick = fecharBacklog;
 
@@ -1985,8 +2136,11 @@ document.addEventListener('visibilitychange', () => {
   else if (state.ultimaCarga && Date.now() - state.ultimaCarga > 2 * 60000) carregar();
 });
 
-if (store.get(K.view, '') === 'blk') { document.body.classList.add('v-blk'); carregarBacklog(); }
-else carregar();
+loginPreencher();
+if (state.cred) {
+  if (store.get(K.view, '') === 'blk') { document.body.classList.add('v-blk'); carregarBacklog(); }
+  else carregar();
+}
 </script>
 </body>
 </html>
