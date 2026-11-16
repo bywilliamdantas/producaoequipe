@@ -291,6 +291,12 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .pcard{margin-top:14px;padding:12px 14px;border:1px solid var(--ok-line);border-radius:14px;background:linear-gradient(160deg,rgba(43,227,124,.12),rgba(43,227,124,.03))}
 .pcard .live{display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;font-size:.78rem;font-weight:700;color:#35ff8a;text-transform:uppercase;letter-spacing:.04em}
 .pcard .live i{width:8px;height:8px;border-radius:50%;background:#2be37c;box-shadow:0 0 8px #2be37c}
+.pc-head{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin-bottom:8px}
+.pcard .pc-head .live{margin-bottom:0}
+.pchip{--h:215;flex:none;padding:2px 8px;border-radius:7px;border:1px solid hsl(var(--h) 85% 65%/.5);background:hsl(var(--h) 70% 45%/.18);color:hsl(var(--h) 95% 80%);font-size:.66rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.pcard.cc{border-color:rgba(111,184,255,.5);background:linear-gradient(160deg,rgba(111,184,255,.12),rgba(111,184,255,.03))}
+.pcard.cc .live{color:#6fb8ff}.pcard.cc .live i{background:#6fb8ff;box-shadow:0 0 8px #6fb8ff}
+.c.clk{cursor:pointer}.c.clk:hover{filter:brightness(1.18)}.c.clk:active{transform:scale(.94)}
 .pf{padding:7px 0;border-top:1px solid var(--line)}
 .pf:first-of-type{border-top:0}
 .pf span{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
@@ -831,9 +837,9 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
 // URL anterior (guardada para reverter, se precisar):
 // https://script.google.com/macros/s/AKfycbw4X09EqJk6HHmQvSZhZHgWmlN-qlHDi_uoyvooT_WaiLuNOdi9GPcvTc9CKktszIpk/exec
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbwI2a9CVl2KDnDbNu_5NIaVd-Ogfcvlwn4bhcxy0IZ9d9VXPS3zGZcbgvbRgr239gLY/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbzhVKeccRUfmPp5vLG4E5GUXEqSvWEodc_gUp-tHMLr34V_Ycr5o9q_lgEKwpKhF2OE/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbwI2a9CVl2KDnDbNu_5NIaVd-Ogfcvlwn4bhcxy0IZ9d9VXPS3zGZcbgvbRgr239gLY/exec';
+const URL_CSV = 'https://script.google.com/macros/s/AKfycbzhVKeccRUfmPp5vLG4E5GUXEqSvWEodc_gUp-tHMLr34V_Ycr5o9q_lgEKwpKhF2OE/exec';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -1038,8 +1044,13 @@ function celulaPlay(t) {
 }
 function cartaoOS(p, rotulo, extra) {
   const card = el('div', 'pcard' + (extra ? ' ' + extra : ''));
-  const lv = el('div', 'live'); lv.appendChild(el('i')); lv.appendChild(document.createTextNode(rotulo)); card.appendChild(lv);
-  [['Tipo', p.tipo], ['Protocolo', p.protocolo], ['Cliente', p.cliente], ['Cidade', p.cidade]].forEach(([k, v]) => {
+  // cabeçalho: situação (Em execução / Agendado / Concluído) + empresa + status da OS (igual ao Backlog)
+  const hd = el('div', 'pc-head');
+  const lv = el('div', 'live'); lv.appendChild(el('i')); lv.appendChild(document.createTextNode(rotulo)); hd.appendChild(lv);
+  if (p.emp) { const e = el('span', 'pchip', p.emp); e.title = 'Empresa'; e.style.setProperty('--h', empH(p.emp)); hd.appendChild(e); }
+  if (p.status) { const st = el('span', 'pchip', p.status); st.title = 'Status da OS'; st.style.setProperty('--h', hueDe(p.status, ST_H)); hd.appendChild(st); }
+  card.appendChild(hd);
+  [['Tipo', p.tipo], ['Protocolo', p.protocolo], ['Cliente', p.cliente], ['Cidade', p.cidade], ['Bairro', p.bairro]].forEach(([k, v]) => {
     const f = el('div', 'pf'); f.appendChild(el('span', '', k)); f.appendChild(el('b', '', v || '—')); card.appendChild(f);
   });
   return card;
@@ -1049,8 +1060,10 @@ function abrirPlay(t) {
   const box = $('pLista'); box.innerHTML = '';
   $('pNome').textContent = tc(t.nome);
   if (t.play === 'play') {
-    $('pSub').textContent = sup + 'Na agenda: ' + (t.agenda || 0);
+    const ag = t.agendaItens || [];
+    $('pSub').textContent = sup + 'Em execução: ' + (t.playItens || []).length + ' · Agendadas: ' + ag.length;
     (t.playItens || []).forEach(p => box.appendChild(cartaoOS(p, 'Em execução')));
+    ag.forEach(p => box.appendChild(cartaoOS(p, 'Agendado', 'ag')));
   } else if (t.play === 'parado') {
     const l = t.agendaItens || [];
     $('pSub').textContent = sup + 'Sem play · ' + l.length + (l.length === 1 ? ' agendado' : ' agendados');
@@ -1068,6 +1081,22 @@ function abrirPlay(t) {
     v.appendChild(el('p', '', 'Sem nada agendado e nenhuma OS concluída.'));
     box.appendChild(v);
   }
+  $('dlgPlay').showModal();
+}
+// clique no valor de Concluídos: lista as OS concluídas do técnico no mesmo padrão dos cartões do Play
+function abrirConcluidos(t) {
+  const sup = t.supervisor ? 'Supervisor: ' + tc(t.supervisor) + ' · ' : '';
+  const box = $('pLista'); box.innerHTML = '';
+  $('pNome').textContent = tc(t.nome);
+  const l = t.conclItens || [];
+  const n = Number(t.concl) || 0;
+  $('pSub').textContent = sup + 'Concluídos: ' + n + (l.length < n ? ' (mostrando ' + l.length + ')' : '');
+  if (!l.length) {
+    const v = el('div', 'pvazio'); v.innerHTML = ic('check');
+    v.appendChild(el('b', '', 'Nenhuma OS concluída'));
+    v.appendChild(el('p', '', 'Este técnico ainda não concluiu nenhuma OS no período.'));
+    box.appendChild(v);
+  } else l.forEach(p => box.appendChild(cartaoOS(p, 'Concluído', 'cc')));
   $('dlgPlay').showModal();
 }
 $('pFechar').onclick = () => $('dlgPlay').close();
@@ -1149,7 +1178,13 @@ function render() {
     r.appendChild(celula(t.reabPend, t.reabPend > 0 ? 'red' : ''));
     r.appendChild(celula(t.inst));
     r.appendChild(celula(t.pend));
-    r.appendChild(celula(t.concl, t.nivel));
+    const cc = celula(t.concl, t.nivel + ' clk');
+    cc.setAttribute('role', 'button'); cc.tabIndex = 0;
+    cc.title = 'Ver OS concluídas';
+    cc.setAttribute('aria-label', tc(t.nome) + ': ver ' + t.concl + ' OS concluídas');
+    cc.addEventListener('click', e => { e.stopPropagation(); abrirConcluidos(t); });
+    cc.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirConcluidos(t); } });
+    r.appendChild(cc);
     r.appendChild(celulaPlay(t));
     const n = el('div', 'nome', tc(t.nome));
     if (t.semBase) n.appendChild(el('small', '', 'nome não aparece na base'));
