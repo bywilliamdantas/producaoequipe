@@ -496,6 +496,57 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 .odesc p{margin:0;font-size:.86rem;line-height:1.5;color:#cfdcf5;overflow-wrap:anywhere}
 .skelb{height:84px;border-radius:16px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:sh 1.2s linear infinite}
 @media(prefers-reduced-motion:reduce){.skelb{animation:none}}
+<style id="modo">
+/* ===== MODO DESKTOP: ocupa a tela inteira, em qualquer tamanho de janela ===== */
+body.m-desk .wrap,body.m-desk .bwrap{max-width:none;width:100%;padding-inline:clamp(14px,2.4vw,40px)}
+body.m-desk .top{gap:12px;margin:0 0 18px}
+body.m-desk .logo{width:46px;height:46px}
+body.m-desk .brand{gap:12px}
+body.m-desk .brand h1{font-size:2rem}
+body.m-desk .brand p{font-size:.92rem}
+body.m-desk .icon-btn{height:48px}
+body.m-desk .icon-btn{width:48px}
+body.m-desk .tools{gap:12px;margin-bottom:16px}
+body.m-desk .search,body.m-desk .filter-btn,body.m-desk .bsel{height:52px}
+body.m-desk .kpis{gap:14px;margin-bottom:16px}
+body.m-desk .kpi{padding:16px 6px 14px;border-radius:18px}
+body.m-desk .kpi .i{width:30px;height:30px}
+body.m-desk .kpi b{font-size:2.4rem}
+body.m-desk .kpi span{font-size:.95rem}
+body.m-desk .kpis.bk{grid-template-columns:repeat(6,minmax(0,1fr))}
+body.m-desk .kpis.bk .kpi b{font-size:2.3rem}
+body.m-desk .kpis.bk .kpi span{font-size:.9rem}
+body.m-desk .modo{padding:14px 18px;margin-bottom:16px}
+body.m-desk .modo .mt b{font-size:1.35rem}
+body.m-desk .meta{font-size:.9rem}
+body.m-desk .grid{column-gap:14px;padding-inline:18px;grid-template-columns:repeat(3,minmax(64px,1fr)) minmax(80px,1.1fr) minmax(100px,1.3fr) minmax(80px,1fr) minmax(200px,3fr) 24px}
+body.m-desk .thead{min-height:60px;font-size:.85rem}
+body.m-desk .thead .sup,body.m-desk .thead .tec{font-size:.95rem}
+body.m-desk .row{padding-block:8px}
+body.m-desk .pill{min-height:44px;font-size:.85rem}
+body.m-desk .nome{font-size:1.05rem}
+body.m-desk .c{height:40px;font-size:1.3rem}
+body.m-desk .c.normal,body.m-desk .c.obs,body.m-desk .c.atencao,body.m-desk .c.acima{height:48px;font-size:1.6rem}
+body.m-desk .dgrid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+body.m-desk .more{max-width:420px;margin-inline:auto}
+body.m-desk dialog{width:min(560px,calc(100% - 48px))}
+body.m-desk #dlgOS{width:min(760px,calc(100% - 48px))}
+body.m-desk .emps{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+body.m-desk .ecard .ev{font-size:2.6rem}
+body.m-desk .bsecs{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body.m-desk .bsec.wide{grid-column:1/-1}
+body.m-desk .olist{grid-template-columns:repeat(auto-fill,minmax(min(380px,100%),1fr));gap:12px}
+@media(min-width:1500px){body.m-desk .bsecs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:820px){body.m-desk .bsecs{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:760px){
+  body.m-desk .grid{column-gap:6px;padding-inline:8px;grid-template-columns:repeat(3,minmax(0,.6fr)) minmax(0,.7fr) minmax(0,.9fr) minmax(0,.7fr) minmax(90px,1.8fr) 14px}
+  body.m-desk .thead{font-size:.7rem}
+  body.m-desk .nome{font-size:.9rem}
+  body.m-desk .kpi b,body.m-desk .kpis.bk .kpi b{font-size:1.6rem}
+  body.m-desk .kpi span{font-size:.75rem}
+  body.m-desk .kpis.bk{grid-template-columns:repeat(3,minmax(0,1fr))}
+  body.m-desk .brand h1{font-size:1.5rem}
+}
 </style>
 </head>
 <body>
@@ -541,19 +592,22 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <symbol id="i-list" viewBox="0 0 24 24"><path d="M8.5 6H20M8.5 12H20M8.5 18H20"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="3"/></symbol>
 <symbol id="i-pie" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15.5 3.4A9 9 0 0 1 20.6 8.5h-5.1z"/></symbol>
 <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6.5 3h11M6.5 21h11M7.5 3c0 4 2.5 5 4.5 9-2 4-4.5 5-4.5 9M16.5 3c0 4-2.5 5-4.5 9 2 4 4.5 5 4.5 9"/></symbol>
+<symbol id="i-login" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 8l4 4-4 4M14 12H3"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M8.5 20.5h7M12 16.5v4"/></symbol>
+<symbol id="i-mobile" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M11 18.5h2"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></symbol>
 </defs></svg>
 <div id="login" role="dialog" aria-labelledby="lgTitulo">
   <form class="lg-card" id="lgForm" autocomplete="off">
     <div class="lg-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
     <h1 id="lgTitulo">Produção Parcial</h1>
-    <p class="lg-sub">As informações em sistema NÃO são valores validados para premiação</p>
+    <p class="lg-sub">As informações registradas no sistema não representam valores oficialmente validados para fins de premiação.</p>
     <div class="lg-field">
       <label for="lgSup"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Supervisor</label>
       <select id="lgSup" class="lg-sel" required disabled><option value="">Carregando…</option></select>
     </div>
     <div class="lg-acts">
-      <button type="submit" class="lg-btn" id="lgBtn" disabled>Entrar<svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></button>
+      <button type="submit" class="lg-btn" id="lgBtn" disabled><svg class="i" aria-hidden="true"><use href="#i-login"/></svg>Entrar</button>
       <button type="button" class="lg-btn blk" id="lgBlk"><svg class="i" aria-hidden="true"><use href="#i-stack"/></svg>Backlog</button>
     </div>
     <p class="lg-msg" id="lgMsg" aria-live="polite"></p>
@@ -742,6 +796,8 @@ body{background:radial-gradient(120% 55% at 50% -8%,#12306e 0,transparent 62%),r
 <script>
 /* ============ CONFIGURAÇÃO ============ */
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
+// URL anterior (guardada para reverter, se precisar):
+// https://script.google.com/macros/s/AKfycbw4X09EqJk6HHmQvSZhZHgWmlN-qlHDi_uoyvooT_WaiLuNOdi9GPcvTc9CKktszIpk/exec
 const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbwI2a9CVl2KDnDbNu_5NIaVd-Ogfcvlwn4bhcxy0IZ9d9VXPS3zGZcbgvbRgr239gLY/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
 const URL_CSV = 'https://script.google.com/macros/s/AKfycbwI2a9CVl2KDnDbNu_5NIaVd-Ogfcvlwn4bhcxy0IZ9d9VXPS3zGZcbgvbRgr239gLY/exec';
@@ -766,6 +822,16 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
 };
 const K = { filtros: 'dp_filtros_v4', codigo: 'dp_codigo', url: 'dp_url', sup: 'dp_supervisor', view: 'dp_view' };
+
+/* ----- modo de visualização automático -----
+   Desktop = tela larga (>= 900px) com mouse/trackpad. Celular e tablet (toque) ficam em Mobile. */
+const mqDesk = window.matchMedia('(min-width: 900px) and (hover: hover) and (pointer: fine)');
+function aplicarModo() {
+  document.body.classList.toggle('m-desk', mqDesk.matches);
+  document.body.classList.toggle('m-mob', !mqDesk.matches);
+}
+aplicarModo();
+if (mqDesk.addEventListener) mqDesk.addEventListener('change', aplicarModo); else mqDesk.addListener(aplicarModo);
 
 let SCRIPT_URL = URL_PADRAO;
 const urlValida = u => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
