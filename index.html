@@ -136,6 +136,10 @@
   dl.det { display: grid; grid-template-columns: 1fr auto; margin: 14px 0 0; }
   dl.det dt, dl.det dd { margin: 0; padding: 9px 0; border-bottom: 1px solid var(--line); }
   dl.det dt { color: var(--muted); }
+  .tdias h3 { margin: 18px 0 6px; font-size: .95rem; font-weight: 700; }
+  .tdlist { max-height: 240px; overflow-y: auto; }
+  .tdia { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+  .tdia span:first-child { color: var(--muted); }
   dl.det dd { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
 
   @media (max-width: 560px) {
@@ -874,6 +878,7 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
 <dialog id="dlgTec"><div class="dlg">
   <h2 id="tNome"></h2><p class="sub" id="tSup"></p><span class="chip" id="tChip"></span>
   <dl class="det" id="tDet"></dl>
+  <div class="tdias" id="tDias"></div>
   <div class="actions"><button type="button" class="btn pri" id="tFechar">Fechar</button></div>
 </div></dialog>
 
@@ -907,9 +912,9 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
 // URL do app da web (termina em /exec), gerada ao implantar o Apps Script
 // URL anterior (guardada para reverter, se precisar):
 // https://script.google.com/macros/s/AKfycbw4X09EqJk6HHmQvSZhZHgWmlN-qlHDi_uoyvooT_WaiLuNOdi9GPcvTc9CKktszIpk/exec
-const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbx9N0eGQJ3TiKdAw35X_ygGnmbyCaBGfqNzNRtfSc8rBqMI55_GnENWLT5TiqJPzJma/exec';
+const URL_PADRAO = 'https://script.google.com/macros/s/AKfycbzgOV8ovF0xcdi9MAerI4bB_cAA7iy-OVIIwOx8GTKjOTBQ5uKzATkLYb9e6nZ35skq/exec';
 // Opcional: link CSV da aba "URL" publicada na web (assim você troca a URL só na planilha)
-const URL_CSV = 'https://script.google.com/macros/s/AKfycbx9N0eGQJ3TiKdAw35X_ygGnmbyCaBGfqNzNRtfSc8rBqMI55_GnENWLT5TiqJPzJma/exec';
+const URL_CSV = 'https://script.google.com/macros/s/AKfycbzgOV8ovF0xcdi9MAerI4bB_cAA7iy-OVIIwOx8GTKjOTBQ5uKzATkLYb9e6nZ35skq/exec';
 // Atualização automática (minutos)
 const AUTO_MIN = 5;
 /* ====================================== */
@@ -1246,7 +1251,7 @@ const nivelDia = c => c <= 2 ? 'atencao' : c === 3 ? 'obs' : c <= 5 ? 'normal' :
 function render() {
   const d = state.dados; if (!d) return;
   const diario = state.periodo === 'hoje' || state.periodo === 'ontem' || !!(d.periodo && d.periodo.ini && d.periodo.ini === d.periodo.fim);
-  (d.tecnicos || []).forEach(t => { if (t.nivelBase === undefined) t.nivelBase = t.nivel; t.nivel = diario ? nivelDia(Number(t.concl) || 0) : t.nivelBase; });
+  (d.tecnicos || []).forEach(t => { if (t.nivelBase === undefined) t.nivelBase = t.nivel; t.nivel = t.metasTipo ? t.nivelBase : diario ? nivelDia(Number(t.concl) || 0) : t.nivelBase; });
   // data/hora = última alteração da base de encerrados de hoje (campo hojeAtualizado); cai para d.atualizado se o script ainda não envia
   $('subtitulo').textContent = d.periodo
     ? (d.periodo.ini === d.periodo.fim ? d.periodo.rotulo : d.periodo.rotulo + ' (' + d.periodo.iniBR + ' a ' + d.periodo.fimBR + ')')
@@ -1316,14 +1321,17 @@ function render() {
   // atividades em play agora (OS com em_play = Sim dos técnicos visíveis)
   $('kPlay').textContent = lista.reduce((a, t) => a + (t.playItens ? t.playItens.length : 0), 0);
   $('kConcl').textContent = s.concl;
-  // filtro Hoje: o cartão enche de baixo para cima (meta = técnicos ativos x 5); demais filtros: verde cheio
-  const kc = $('kConcl').parentElement, meta = nAtivos * 5;
+  // Meta = soma da meta de cada técnico (Meta I..IV do Tipo x dias produzidos). Servidor antigo (sem metaPer): técnicos ativos x 5
+  const temMeta = lista.some(t => t.metaPer !== undefined);
+  const kc = $('kConcl').parentElement;
+  const meta = temMeta ? lista.reduce((a, t) => a + (Number(t.metaPer) || 0), 0) : nAtivos * 5;
+  const fmtN = n => (Math.round(n * 100) / 100).toString().replace('.', ',');
   kc.classList.toggle('prog', state.periodo === 'hoje');
-  // Gap: começa em -(técnicos x 5) vermelho cheio; esvazia para preto conforme os concluídos sobem; na meta = 0; acima = +excedente com troféu
+  // Gap: começa em -meta vermelho cheio; esvazia para preto conforme os concluídos sobem; na meta = 0; acima = +excedente com troféu
   const gc = $('kGapCard'), gv = $('kGap');
-  if (diario && meta) {
-    const g = s.concl - meta;
-    gv.textContent = g > 0 ? '+' + g : String(g);
+  if ((diario || temMeta) && meta) {
+    const g = Math.round((s.concl - meta) * 100) / 100;
+    gv.textContent = g > 0 ? '+' + fmtN(g) : fmtN(g);
     gc.style.setProperty('--gf', Math.max(0, 100 - s.concl / meta * 100).toFixed(1) + '%');
     gc.classList.toggle('trofeu', g > 0);
     $('kGapIcon').innerHTML = '<use href="#i-' + (g > 0 ? 'trophy' : 'gap') + '"/>';
@@ -1344,8 +1352,8 @@ function render() {
     ['Técnicos ativos / total', nAtivos + ' / ' + lista.length],
     ['Em atenção', s.atencao], ['Em observação', s.obs], ['Normal', s.normal], ['Acima', s.acima],
     ['Média por técnico ativo', nAtivos ? (s.concl / nAtivos).toFixed(1).replace('.', ',') : '0'],
-    ['Meta Normal (período)', d.metas ? String(d.metas.normal).replace('.', ',') : '-'],
-    ['Meta Observação (período)', d.metas ? String(d.metas.obs).replace('.', ',') : '-']
+    temMeta ? ['Meta do período (Meta ' + (ROMANOS[(d.metaGap || 1) - 1] || 'I') + ')', fmtN(meta)] : ['Meta Normal (período)', d.metas ? String(d.metas.normal).replace('.', ',') : '-'],
+    temMeta ? ['Gap do período', (s.concl - meta > 0 ? '+' : '') + fmtN(s.concl - meta)] : ['Meta Observação (período)', d.metas ? String(d.metas.obs).replace('.', ',') : '-']
   ];
   itens.forEach(([k, v]) => { const x = el('div'); x.appendChild(el('span', '', k)); x.appendChild(el('b', '', String(v))); dg.appendChild(x); });
 
@@ -1353,6 +1361,7 @@ function render() {
 }
 
 /* ----- detalhe do técnico ----- */
+const ROMANOS = ['I', 'II', 'III', 'IV'];
 function abrirTecnico(t) {
   $('tNome').textContent = tc(t.nome);
   $('tSup').textContent = t.supervisor ? 'Supervisor: ' + tc(t.supervisor) : '';
@@ -1365,9 +1374,33 @@ function abrirTecnico(t) {
    ['Cancelados', t.cancel], ['Concluídos em atraso', t.atraso],
    ['Na agenda (abertos)', t.play === 'na' ? '-' : (t.agenda || 0)]]
     .forEach(([k, v]) => { dl.appendChild(el('dt', '', k)); dl.appendChild(el('dd', '', String(v))); });
-  if (state.dados && state.dados.metas) {
-    dl.appendChild(el('dt', '', 'Meta Normal / Observação'));
-    dl.appendChild(el('dd', '', String(state.dados.metas.normal).replace('.', ',') + ' / ' + String(state.dados.metas.obs).replace('.', ',')));
+  const fN = n => (Math.round(n * 100) / 100).toString().replace('.', ',');
+  const bx = $('tDias'); bx.innerHTML = '';
+  if (t.metasTipo) {
+    [['Tipo', t.tipo || '-'],
+     ['Metas I / II / III / IV', t.metasTipo.map(fN).join(' / ')],
+     ['Dias produzidos', t.diasProd],
+     ['Média por dia', fN(t.media || 0)],
+     ['Meta do período (Meta ' + ROMANOS[((state.dados && state.dados.metaGap) || 1) - 1] + ')', fN(t.metaPer || 0)],
+     ['Gap', (t.gap > 0 ? '+' : '') + fN(t.gap || 0)]]
+      .forEach(([k, v]) => { dl.appendChild(el('dt', '', k)); dl.appendChild(el('dd', '', String(v))); });
+    // produção dia a dia: cada dia produzido com a meta que alcançou
+    if ((t.dias || []).length) {
+      bx.appendChild(el('h3', '', 'Dias produzidos'));
+      const ls = el('div', 'tdlist');
+      t.dias.slice().reverse().forEach(x => {
+        const r = el('div', 'tdia');
+        r.appendChild(el('span', '', x.d));
+        r.appendChild(el('b', '', x.concl + (x.concl === 1 ? ' concluída' : ' concluídas')));
+        const c = el('span', 'chip ' + x.nivel, x.faixa > 0 ? 'Meta ' + ROMANOS[x.faixa - 1] : 'Abaixo da meta');
+        r.appendChild(c); ls.appendChild(r);
+      });
+      bx.appendChild(ls);
+    }
+  } else {
+    dl.appendChild(el('dt', '', 'Tipo / meta'));
+    dl.appendChild(el('dd', '', t.tipo ? t.tipo + ' (não está na aba Metas)' : 'Sem Tipo na aba Técnicos'));
+    if (t.metaPer !== undefined) { dl.appendChild(el('dt', '', 'Meta do período (padrão)')); dl.appendChild(el('dd', '', fN(t.metaPer))); dl.appendChild(el('dt', '', 'Gap')); dl.appendChild(el('dd', '', (t.gap > 0 ? '+' : '') + fN(t.gap || 0))); }
   }
   $('dlgTec').showModal();
 }
