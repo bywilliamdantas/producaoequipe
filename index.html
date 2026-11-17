@@ -633,6 +633,20 @@ body.m-desk .row:focus-visible{outline-offset:-2px;border-radius:12px}
 .mhint{margin:6px 2px 0;font-size:.78rem;color:var(--muted)}
 @media(max-width:340px){.lg-acts{flex-direction:column}.lg-acts .lg-btn,.lg-acts .lg-btn.sv{flex:none;width:100%}}
 </style>
+<style id="css-det">
+.dgrid .dsec{display:block;grid-column:1/-1;padding:14px 0 6px;border-bottom:1.5px solid var(--line-strong);font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7fb0ff}
+.dgrid .dsec:first-child{padding-top:10px}
+.dgrid .em b{color:#2be37c}
+.dgrid .dbar{display:block;grid-column:1/-1;padding:10px 0;border-bottom:1px solid var(--line)}
+.dbar-t{display:flex;justify-content:space-between;font-size:.76rem;color:var(--muted);margin-bottom:6px}
+.dbar-b{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.dbar-b u{display:block;height:100%;min-width:4px;border-radius:99px;background:linear-gradient(90deg,#2f7bff,#2be37c);box-shadow:0 0 10px rgba(47,123,255,.6);transition:width .6s}
+.dgrid .dmetas{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;grid-column:1/-1;padding:10px 0;border-bottom:1px solid var(--line)}
+.dm{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.78rem}
+.dm span{color:var(--muted)} .dm b{font-size:1.1rem}
+.dm.ok{border-color:var(--ok-line);background:var(--ok-bg)} .dm.ok b{color:var(--ok)}
+.dm.ok span::before{content:"✓ "}
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -1341,23 +1355,96 @@ function render() {
   }
   kc.style.setProperty('--fill', (state.periodo === 'hoje' && meta ? Math.min(100, s.concl / meta * 100) : 0).toFixed(1) + '%');
 
-  const dg = $('dgrid'); dg.innerHTML = '';
-  const itens = [
-    ['Instalação', s.inst], ['Reab. Inst.', s.reabI], ['Prest. de contas', s.outros], ['Reab. prest. contas', s.reabO],
-    ['Cancelados', s.canc], ['Em atraso (SLA)', s.atraso],
-    ['Em play agora', lista.filter(t => t.play === 'play').length],
-    ['Agendados sem play', lista.filter(t => t.play === 'parado').length],
-    ['Agenda concluída', lista.filter(t => t.play === 'fim').length],
-    ['Sem agenda e sem conclusão', lista.filter(t => t.play === 'vazio').length],
-    ['Técnicos ativos / total', nAtivos + ' / ' + lista.length],
-    ['Em atenção', s.atencao], ['Em observação', s.obs], ['Normal', s.normal], ['Acima', s.acima],
-    ['Média por técnico ativo', nAtivos ? (s.concl / nAtivos).toFixed(1).replace('.', ',') : '0'],
-    temMeta ? ['Meta do período (Meta ' + (ROMANOS[(d.metaGap || 1) - 1] || 'I') + ')', fmtN(meta)] : ['Meta Normal (período)', d.metas ? String(d.metas.normal).replace('.', ',') : '-'],
-    temMeta ? ['Gap do período', (s.concl - meta > 0 ? '+' : '') + fmtN(s.concl - meta)] : ['Meta Observação (período)', d.metas ? String(d.metas.obs).replace('.', ',') : '-']
-  ];
-  itens.forEach(([k, v]) => { const x = el('div'); x.appendChild(el('span', '', k)); x.appendChild(el('b', '', String(v))); dg.appendChild(x); });
+  montarDetalhes(lista, s, { meta, temMeta, nAtivos, fmtN, d });
 
   $('filtroBtn').classList.toggle('on', state.periodo !== 'hoje' || !mesmoSet(state.sups, supsPadrao()) || state.ordem !== 'sup');
+}
+
+
+/* ----- Mais detalhes: visão do técnico (individual) x visão do supervisor/coordenador (equipe) ----- */
+const faixaDe = (v, ms) => ms.filter(m => v + 1e-9 >= m).length;
+function montarDetalhes(lista, s, c) {
+  const dg = $('dgrid'); dg.innerHTML = '';
+  const fN = c.fmtN;
+  const sec = t => { const h = el('div', 'dsec', t); dg.appendChild(h); };
+  const lin = (k, v, cls) => { const x = el('div', cls || ''); x.appendChild(el('span', '', k)); x.appendChild(el('b', '', String(v))); dg.appendChild(x); };
+  const sinal = n => (n > 0 ? '+' : '') + fN(n);
+
+  if (ehTec()) {
+    const t = lista[0];
+    if (!t) { dg.appendChild(el('div', 'dsec', 'Sem dados no período.')); return; }
+    const dias = Number(t.diasMeta) || 0, media = Number(t.media) || 0, concl = Number(t.concl) || 0;
+    sec('Sua meta');
+    if (t.metasTipo) {
+      const ms = t.metasTipo, f = faixaDe(media, ms), prox = f < 4 ? ms[f] : null;
+      lin('Tipo', t.tipo || '-');
+      lin('Média atual por dia', fN(media));
+      lin('Meta atingida', f > 0 ? 'Meta ' + ROMANOS[f - 1] + (f === 4 ? ' (máxima)' : '') : 'Ainda abaixo da Meta I');
+      if (prox != null) {
+        const base = Math.max(1, dias), falta = Math.max(0, Math.ceil(prox * base - concl - 1e-9));
+        lin('Próxima meta', 'Meta ' + ROMANOS[f] + ' · ' + fN(prox) + '/dia');
+        lin(state.periodo === 'hoje' ? 'Falta hoje' : 'Falta no período', '+' + falta + (falta === 1 ? ' OS' : ' OS'));
+        lin('Falta na média', '+' + fN(Math.max(0, prox - media)) + '/dia');
+        const ant = f > 0 ? ms[f - 1] : 0, pc = Math.max(0, Math.min(100, (media - ant) / (prox - ant) * 100));
+        const bx = el('div', 'dbar'); bx.innerHTML = '<div class="dbar-t"><span>' + (f > 0 ? 'Meta ' + ROMANOS[f - 1] : 'Início') + ' · ' + fN(ant) + '</span><span>Meta ' + ROMANOS[f] + ' · ' + fN(prox) + '</span></div><div class="dbar-b"><u style="width:' + pc.toFixed(1) + '%"></u></div>';
+        dg.appendChild(bx);
+      } else lin('Próxima meta', 'Você já está na faixa máxima');
+      const tb = el('div', 'dmetas');
+      ms.forEach((m, i) => { const k = el('div', 'dm' + (f > i ? ' ok' : '')); k.appendChild(el('span', '', 'Meta ' + ROMANOS[i])); k.appendChild(el('b', '', fN(m))); tb.appendChild(k); });
+      dg.appendChild(tb);
+      lin('Meta de referência (Meta ' + ROMANOS[(c.d.metaGap || 1) - 1] + ')', fN(t.metaRef));
+      lin('Meta do período', fN(t.metaPer));
+      lin('Gap do período', sinal(t.gap || 0));
+    } else {
+      lin('Tipo', t.tipo || 'Sem tipo definido');
+      lin('Média atual por dia', fN(media));
+      lin('Meta padrão por dia', fN(t.metaRef));
+      lin('Meta do período', fN(t.metaPer));
+      lin('Gap do período', sinal(t.gap || 0));
+    }
+    sec('Produção');
+    lin('Concluídos', concl, 'em');
+    lin('Dias produzidos', t.diasProd);
+    lin('Instalação', t.inst); lin('Pendência', t.pend);
+    lin('Reab. Inst.', t.reabInst); lin('Reab. Pend.', t.reabPend);
+    lin('Prest. de contas', t.outros); lin('Reab. prest. contas', t.reabOutros);
+    lin('Cancelados', t.cancel); lin('Concluídas em atraso (SLA)', t.atraso);
+    sec('Agenda');
+    lin('Situação', { play: 'Em execução', parado: 'Agendado, sem play', fim: 'Agenda concluída', vazio: 'Sem agenda', na: '-' }[t.play] || '-');
+    lin('Em play agora', (t.playItens || []).length);
+    lin('Agendadas', t.play === 'na' ? '-' : (t.agendaItens || []).length);
+    return;
+  }
+
+  // ---- supervisor / coordenador: visão da equipe ----
+  const ativos = lista.filter(t => t.ativo !== false);
+  const diasTot = ativos.reduce((a, t) => a + (Number(t.diasMeta) || 0), 0);
+  const gapTot = Math.round((s.concl - c.meta) * 100) / 100;
+  sec('Equipe');
+  lin('Técnicos ativos / total', c.nAtivos + ' / ' + lista.length);
+  lin('Concluídos da equipe', s.concl, 'em');
+  lin('Média por técnico ativo', c.nAtivos ? fN(s.concl / c.nAtivos) : '0');
+  lin('Média por dia produzido', diasTot ? fN(s.concl / diasTot) : '0');
+  lin(c.temMeta ? 'Meta do período (Meta ' + ROMANOS[(c.d.metaGap || 1) - 1] + ')' : 'Meta do período', fN(c.meta));
+  lin('Gap da equipe', sinal(gapTot));
+  sec('Técnicos por meta atingida (média por dia)');
+  const cont = [0, 0, 0, 0, 0]; let semMeta = 0;
+  ativos.forEach(t => { if (!t.metasTipo) { semMeta++; return; } cont[faixaDe(Number(t.media) || 0, t.metasTipo)]++; });
+  lin('Abaixo da Meta I', cont[0]);
+  ROMANOS.forEach((r, i) => lin('Meta ' + r, cont[i + 1]));
+  if (semMeta) lin('Sem tipo / sem meta', semMeta);
+  sec('Situação');
+  lin('Em atenção', s.atencao); lin('Em observação', s.obs); lin('Normal', s.normal); lin('Acima', s.acima);
+  sec('Produção');
+  lin('Instalação', s.inst); lin('Pendência', s.pend);
+  lin('Reab. Inst.', s.reabI); lin('Reab. Pend.', s.reabP);
+  lin('Prest. de contas', s.outros); lin('Reab. prest. contas', s.reabO);
+  lin('Cancelados', s.canc); lin('Concluídas em atraso (SLA)', s.atraso);
+  sec('Play e agenda');
+  lin('Em play agora', lista.filter(t => t.play === 'play').length);
+  lin('Agendados sem play', lista.filter(t => t.play === 'parado').length);
+  lin('Agenda concluída', lista.filter(t => t.play === 'fim').length);
+  lin('Sem agenda e sem conclusão', lista.filter(t => t.play === 'vazio').length);
 }
 
 /* ----- detalhe do técnico ----- */
