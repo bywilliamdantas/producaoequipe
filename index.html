@@ -62,6 +62,7 @@
 <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7c2 0 3.8.8 5.3 1.9M22 12s-4 7-10 7c-2 0-3.8-.8-5.3-1.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M4 4l16 16"/></symbol>
 <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></symbol>
 <symbol id="i-tick" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke-width="2.4"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></symbol>
 </defs></svg>
 <div id="tvbar" class="tvbar" aria-hidden="true"><b id="tvTela"></b><span id="tvAtual"></span><span id="tvRelogio"></span></div>
@@ -76,31 +77,80 @@
   <button type="button" role="menuitemradio" data-t="claro"><svg class="i" aria-hidden="true"><use href="#i-sun"/></svg>Claro</button>
   <button type="button" role="menuitemradio" data-t="escuro"><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg>Escuro</button>
 </div>
-<div id="alertaSync" class="alerta-sync" role="alert" hidden></div>
 <div id="ptr" class="ptr" aria-hidden="true"></div>
 <div id="login" role="dialog" aria-labelledby="lgTitulo">
-  <form class="lg-card" id="lgForm" novalidate>
-    <div class="lg-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
-    <h1 id="lgTitulo">Produção Parcial</h1>
-    <p class="lg-sub">As informações registradas no sistema não representam valores oficialmente validados para fins de premiação.</p>
-    <div class="lg-field">
-      <label for="lgUser"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Login</label>
-      <input id="lgUser" class="lg-inp" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="seu.login" required>
-    </div>
-    <div class="lg-field">
-      <label for="lgPass"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>Senha</label>
-      <div class="lg-pw">
-        <input id="lgPass" class="lg-inp" type="password" autocomplete="current-password" autocapitalize="none" placeholder="Sua senha" required>
-        <button type="button" class="lg-eye" id="lgEye" aria-label="Mostrar senha" title="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg></button>
+  <div class="ln-shell">
+    <section class="ln-brand">
+      <div class="ln-app" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
+      <h1 id="lgTitulo">Produção <em>Parcial</em></h1>
+      <p class="ln-aviso">As informações registradas no sistema não representam valores <b>oficialmente validados</b> para fins de premiação.</p>
+      <div class="ln-art" aria-hidden="true">
+        <svg viewBox="0 0 400 250" focusable="false">
+          <defs>
+            <linearGradient id="lnP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f7bff" stop-opacity=".55"/><stop offset="1" stop-color="#143a8c" stop-opacity=".25"/></linearGradient>
+            <linearGradient id="lnB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4aa3ff"/><stop offset="1" stop-color="#1f5fe0"/></linearGradient>
+            <linearGradient id="lnA" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff7a00"/><stop offset="1" stop-color="#ffb347"/></linearGradient>
+            <radialGradient id="lnG" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#2f7bff" stop-opacity=".45"/><stop offset="1" stop-color="#2f7bff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <ellipse cx="200" cy="205" rx="190" ry="34" fill="url(#lnG)"/>
+          <ellipse cx="200" cy="205" rx="165" ry="26" fill="none" stroke="#2f7bff" stroke-opacity=".7" stroke-width="2"/>
+          <ellipse cx="200" cy="205" rx="140" ry="21" fill="none" stroke="#ff9a1f" stroke-opacity=".85" stroke-width="2.4"/>
+          <rect x="58" y="92" width="150" height="100" rx="8" fill="url(#lnP)" stroke="#4aa3ff" stroke-opacity=".5" transform="skewY(-6)"/>
+          <rect x="84" y="62" width="205" height="128" rx="10" fill="url(#lnP)" stroke="#4aa3ff" stroke-opacity=".7" transform="skewY(-6)"/>
+          <rect x="112" y="128" width="26" height="52" rx="3" fill="url(#lnB)"/>
+          <rect x="146" y="112" width="26" height="68" rx="3" fill="url(#lnB)"/>
+          <rect x="180" y="96" width="26" height="84" rx="3" fill="url(#lnB)"/>
+          <rect x="214" y="80" width="26" height="100" rx="3" fill="url(#lnB)"/>
+          <rect x="248" y="62" width="26" height="118" rx="3" fill="url(#lnB)"/>
+          <path d="M104 150 C 160 140, 210 112, 286 56" fill="none" stroke="url(#lnA)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M262 52 L292 48 L284 78 Z" fill="#ffa21f"/>
+          <path d="M300 128 L338 114 L338 156 C338 176 322 188 300 196 C278 188 262 176 262 156 L262 114 Z" transform="translate(12 -6)" fill="#0d2a66" stroke="#4aa3ff" stroke-width="4"/>
+          <path d="M290 158 l12 12 l24 -26" transform="translate(12 -6)" fill="none" stroke="#7fc4ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
-    </div>
-    <div class="lg-acts">
-      <button type="submit" class="lg-btn" id="lgBtn" disabled><svg class="i" aria-hidden="true"><use href="#i-login"/></svg>Entrar</button>
-      <button type="button" class="lg-btn sv" id="lgSave" aria-pressed="false" title="Guardar login e senha neste aparelho para entrar direto"><svg class="i" aria-hidden="true"><use href="#i-save"/></svg><span>Salvar</span></button>
-    </div>
-    <p class="lg-msg" id="lgMsg" aria-live="polite"></p>
-    <div class="lg-foot">© 2026 William Dantas</div>
-  </form>
+      <ul class="ln-feats">
+        <li><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg><span>Acesso<br>Seguro</span></li>
+        <li><svg class="i" aria-hidden="true"><path d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"/></svg><span>Informações<br>Confiáveis</span></li>
+        <li><svg class="i" aria-hidden="true"><use href="#i-bars"/></svg><span>Gestão<br>Inteligente</span></li>
+      </ul>
+      <p class="ln-copy">© 2026 William Dantas</p>
+    </section>
+
+    <form class="ln-card" id="lgForm" novalidate>
+      <div class="ln-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
+      <h2 class="ln-h">Login no Sistema</h2>
+      <p class="ln-sub">Acesse sua conta para continuar</p>
+
+      <div class="ln-field">
+        <svg class="i ln-ic" aria-hidden="true"><use href="#i-user"/></svg>
+        <div class="ln-in">
+          <label for="lgUser">Login</label>
+          <input id="lgUser" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+        </div>
+      </div>
+      <div class="ln-field">
+        <svg class="i ln-ic" aria-hidden="true"><use href="#i-lock"/></svg>
+        <div class="ln-in">
+          <label for="lgPass">Senha</label>
+          <input id="lgPass" type="password" autocomplete="current-password" autocapitalize="none" required>
+        </div>
+        <button type="button" class="ln-eye" id="lgEye" aria-label="Mostrar senha" title="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg></button>
+      </div>
+
+      <div class="ln-row">
+        <label class="ln-keep"><input type="checkbox" id="lgKeep"><span>Manter conectado</span></label>
+        <button type="button" class="ln-forgot" id="lgForgot" aria-expanded="false" aria-controls="lgHelp">Esqueceu sua senha?</button>
+      </div>
+      <p class="ln-help" id="lgHelp" role="status" hidden>Para solicitar a redefinição de senha ou de usuário, procure o supervisor responsável.</p>
+
+      <button type="submit" class="ln-btn" id="lgBtn" disabled><svg class="i" aria-hidden="true"><use href="#i-login"/></svg>Entrar</button>
+      <button type="button" class="ln-btn sv" id="lgSave" aria-pressed="false" title="Guardar login e senha neste aparelho para entrar direto"><svg class="i" aria-hidden="true"><use href="#i-save"/></svg><span>Salvar</span></button>
+      <p class="ln-msg" id="lgMsg" aria-live="polite"></p>
+
+      <div class="ln-or" aria-hidden="true"><span>ou</span></div>
+      <div class="ln-foot">© 2026 William Dantas</div>
+    </form>
+  </div>
 </div>
 <div class="wrap">
 
@@ -109,15 +159,16 @@
       <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-5M10 21v-9M16 21v-12" stroke="#3b9bff" stroke-width="3.4"/><path d="M3 11l6-4 4 3 8-6M16 4h5v5" stroke="#ff8a1f" stroke-width="2.2"/></svg></div>
       <div><h1 id="titulo">Produção Parcial</h1><p id="subtitulo"></p></div>
     </div>
-    <button class="icon-btn refbtn" id="refBtn" aria-label="Atualizar dados"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg></button>
-    <button class="icon-btn acessbtn" id="acessBtn" type="button" aria-label="Quem está logado" title="Quem está logado" hidden><svg class="i" aria-hidden="true"><use href="#i-users"/></svg></button>
-    <button class="icon-btn tvbtn" id="tvBtn" type="button" aria-label="Modo TV" title="Modo TV"><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg></button>
-    <button class="icon-btn tema-btn" type="button" aria-label="Tema: escolher" title="Tema" aria-haspopup="menu" aria-expanded="false"><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg></button>
-    <button class="icon-btn blkbtn" id="blkBtn" aria-label="Backlog" title="Backlog"><svg class="i" aria-hidden="true"><use href="#i-stack"/></svg></button>
-    <button class="icon-btn sairbtn" id="sairBtn" aria-label="Sair" title="Sair"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg></button>
+    <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Menu" title="Menu" aria-haspopup="true" aria-expanded="false" aria-controls="menuTopo"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+    <div class="hmenu" id="menuTopo" hidden>
+      <button class="mi refbtn" id="refBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg><span>Atualizar dados</span></button>
+      <button class="mi acessbtn" id="acessBtn" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><span>Quem está logado</span></button>
+      <button class="mi tvbtn" id="tvBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg><span>Modo TV</span></button>
+      <button class="mi tema-btn" type="button" aria-label="Tema: escolher" aria-haspopup="menu" aria-expanded="false"><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg><span>Tema</span></button>
+      <button class="mi blkbtn" id="blkBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-stack"/></svg><span>Backlog</span></button>
+      <button class="mi sairbtn" id="sairBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg><span>Sair</span></button>
+    </div>
   </header>
-
-  <div id="frescor" class="frescor" role="status" hidden></div>
 
   <div class="tools">
     <label class="search">
@@ -173,14 +224,18 @@
       <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8l9.2 4.9-9.2 4.9-9.2-4.9z" stroke="#ff8a1f" stroke-width="2.2"/><path d="M2.8 12l9.2 4.9 9.2-4.9M2.8 16.3l9.2 4.9 9.2-4.9" stroke="#3b9bff" stroke-width="2.4"/></svg></div>
       <div><h1 id="bTitulo">Backlog</h1><p id="bSub">OS abertas</p></div>
     </div>
-    <button class="icon-btn refbtn" id="bRef" aria-label="Atualizar dados"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg></button>
-    <button class="icon-btn tvbtn" id="bTvBtn" type="button" aria-label="Modo TV" title="Modo TV"><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg></button>
-    <button class="icon-btn tema-btn" type="button" aria-label="Tema: escolher" title="Tema" aria-haspopup="menu" aria-expanded="false"><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg></button>
-    <button class="icon-btn bfiltbtn" id="bFiltBtn" aria-label="Filtrar por supervisor" title="Filtrar por supervisor"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></button>
-    <button class="icon-btn" id="bHome" aria-label="Voltar" title="Voltar"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></button>
+    <button class="icon-btn menu-btn" id="bMenuBtn" type="button" aria-label="Menu" title="Menu" aria-haspopup="true" aria-expanded="false" aria-controls="bMenuTopo"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+    <div class="hmenu" id="bMenuTopo" hidden>
+      <button class="mi refbtn" id="bRef" type="button"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg><span>Atualizar dados</span></button>
+      <button class="mi acessbtn" id="bAcessBtn" type="button" hidden><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><span>Quem está logado</span></button>
+      <button class="mi tvbtn" id="bTvBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg><span>Modo TV</span></button>
+      <button class="mi tema-btn" type="button" aria-label="Tema: escolher" aria-haspopup="menu" aria-expanded="false"><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg><span>Tema</span></button>
+      <button class="mi bfiltbtn" id="bFiltBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg><span>Filtrar por supervisor</span></button>
+      <button class="mi homebtn" id="bHome" type="button"><svg class="i" aria-hidden="true"><use href="#i-bars"/></svg><span>Produção</span></button>
+      <button class="mi sairbtn" id="bSairBtn" type="button"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg><span>Sair</span></button>
+    </div>
   </header>
 
-  <div id="bFrescor" class="frescor" role="status" hidden></div>
   <button type="button" class="fbtn bnotif" id="bNotif" hidden>Avisar quando OS estiver para vencer</button>
 
   <div class="modo hoje" id="bModo" role="status"></div>

@@ -83,32 +83,65 @@ function aplicarTema() {
   document.documentElement.setAttribute('data-theme', claro ? 'light' : 'dark');
   const m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', claro ? '#eef3fb' : '#0a111f');
   document.querySelectorAll('.tema-btn').forEach(b => {
-    b.innerHTML = '<svg class="i" aria-hidden="true"><use href="#i-' + (claro ? 'sun' : 'moon') + '"/></svg>';
+    b.innerHTML = '<svg class="i" aria-hidden="true"><use href="#i-' + (claro ? 'sun' : 'moon') + '"/></svg><span>Tema</span>';
     b.setAttribute('aria-label', 'Tema: ' + (e === 'auto' ? 'automático' : e) + '. Escolher');
   });
   document.querySelectorAll('#temaMenu button').forEach(b => { const on = b.dataset.t === e; b.setAttribute('aria-checked', String(on)); b.classList.toggle('on', on); });
 }
 if (mqClaro.addEventListener) mqClaro.addEventListener('change', aplicarTema); else mqClaro.addListener(aplicarTema);
+/* ----- menu do topo (3 barrinhas): mesmos itens, mesma cor e mesma ordem na Produção e no Backlog ----- */
+(function () {
+  const fechar = foco => document.querySelectorAll('.hmenu').forEach(m => {
+    if (m.hidden) return;
+    m.hidden = true;
+    const b = m.parentElement.querySelector('.menu-btn');
+    if (b) { b.setAttribute('aria-expanded', 'false'); if (foco) b.focus(); }
+  });
+  const itens = m => Array.from(m.querySelectorAll('.mi')).filter(x => !x.hidden && x.offsetParent !== null);
+  document.querySelectorAll('.menu-btn').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const m = b.parentElement.querySelector('.hmenu'), abrir = m.hidden;
+    fechar();
+    if (!abrir) return;
+    m.hidden = false; b.setAttribute('aria-expanded', 'true');
+    const p = itens(m)[0]; if (p) p.focus();
+  }));
+  document.querySelectorAll('.hmenu').forEach(m => {
+    // captura: fecha o menu e devolve o foco ao botão antes da ação do item (o foco volta certo depois dos diálogos)
+    m.addEventListener('click', e => { if (e.target.closest('.mi')) { fechar(false); const b = m.parentElement.querySelector('.menu-btn'); if (b) b.focus({ preventScroll: true }); } }, true);
+    m.addEventListener('keydown', e => {
+      const l = itens(m), i = l.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') { e.preventDefault(); l[(i + 1) % l.length].focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); l[(i + l.length - 1) % l.length].focus(); }
+      else if (e.key === 'Home') { e.preventDefault(); l[0].focus(); }
+      else if (e.key === 'End') { e.preventDefault(); l[l.length - 1].focus(); }
+      else if (e.key === 'Tab') fechar(false);
+    });
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.hmenu')) fechar(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.querySelector('.hmenu:not([hidden])')) fechar(true); });
+})();
 (function () {
   const menu = document.getElementById('temaMenu'); let aberto = null;
+  const anc = b => { const t = b.closest('.top'); return (t && t.querySelector('.menu-btn')) || b; };   // o seletor abre abaixo do botão do menu
   const fechar = () => { menu.hidden = true; if (aberto) { aberto.setAttribute('aria-expanded', 'false'); aberto = null; } };
   document.querySelectorAll('.tema-btn').forEach(b => b.addEventListener('click', e => {
     e.stopPropagation();
     if (aberto === b) { fechar(); return; }
     fechar(); aberto = b; b.setAttribute('aria-expanded', 'true'); menu.hidden = false;
-    const r = b.getBoundingClientRect();
+    const r = anc(b).getBoundingClientRect();
     menu.style.top = Math.round(r.bottom + 6) + 'px'; menu.style.right = Math.max(8, Math.round(window.innerWidth - r.right)) + 'px';
     const on = menu.querySelector('button.on') || menu.querySelector('button'); on.focus();
   }));
   menu.querySelectorAll('button').forEach(x => x.addEventListener('click', () => {
     try { localStorage.setItem(TEMA_K, x.dataset.t); } catch (_) {}
-    aplicarTema(); const b = aberto; fechar(); if (b) b.focus();
+    aplicarTema(); const b = aberto; fechar(); if (b) anc(b).focus();
   }));
   menu.addEventListener('keydown', e => {
     const bs = Array.from(menu.querySelectorAll('button')), i = bs.indexOf(document.activeElement);
     if (e.key === 'ArrowDown') { e.preventDefault(); bs[(i + 1) % bs.length].focus(); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); bs[(i + bs.length - 1) % bs.length].focus(); }
-    else if (e.key === 'Escape') { e.stopPropagation(); const b = aberto; fechar(); if (b) b.focus(); }
+    else if (e.key === 'Escape') { e.stopPropagation(); const b = aberto; fechar(); if (b) anc(b).focus(); }
     else if (e.key === 'Tab') fechar();
   });
   document.addEventListener('click', e => { if (!menu.hidden && !menu.contains(e.target)) fechar(); });
@@ -147,7 +180,7 @@ function definirUsuario(u) {
   if (!u) return;
   const ant = state.user, mudou = !ant || ant.nome !== u.nome || ant.papel !== u.papel;
   state.user = u;
-  $('acessBtn').hidden = !(u.papel === 'supervisor' || u.papel === 'coordenador');   // quem está logado: só supervisor e coordenador
+  $('acessBtn').hidden = $('bAcessBtn').hidden = !(u.papel === 'supervisor' || u.papel === 'coordenador');   // quem está logado: só supervisor e coordenador
   ['p-tec', 'p-sup', 'p-coord'].forEach(c => document.body.classList.remove(c));
   document.body.classList.add({ tecnico: 'p-tec', supervisor: 'p-sup', coordenador: 'p-coord' }[u.papel] || 'p-sup');
   if (!mudou) return;
@@ -268,31 +301,12 @@ function lcGravar(k, d, prefixoLimpar) {
 const lcLimpa = login => lcApagar(LC + nk(login || '') + ':');
 const hhmm = ms => { const p = {}; new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Fortaleza', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value); return p.hour + ':' + p.minute; };
 const fmtIdade = m => m < 1 ? '<1 min' : m < 60 ? Math.floor(m) + ' min' : Math.floor(m / 60) + 'h' + String(Math.floor(m % 60)).padStart(2, '0');
-// "dados de há X min" (mesma régua de cores da sincronização: até 30 min verde, 31 a 60 laranja, acima de 60 vermelho)
-function pintarFrescor(box, dadosEm, doCache, atualizando) {
-  if (!box) return;
-  if (!dadosEm) { box.hidden = true; return; }
-  const idade = (Date.now() - dadosEm) / 60000;
-  box.hidden = false;
-  box.className = 'frescor ' + (idade <= 30 ? 'f-ok' : idade <= 60 ? 'f-warn' : 'f-bad');
-  box.textContent = doCache && atualizando ? 'Dados de ' + hhmm(dadosEm) + ', atualizando...' : 'Dados de há ' + fmtIdade(idade);
-}
 // "ao vivo" = dado novo vindo do servidor; guardado ou sem conexão não pulsa (indicador "Hoje" e Play)
 function semVivo(v) { document.body.classList.toggle('sem-vivo', !!v); }
-const mostrarFrescor = () => { pintarFrescor($('frescor'), state.dadosEm, state.doCache, carregando); if (!emBacklog()) semVivo(state.doCache || state.offline); };
-const blFrescor = () => { pintarFrescor($('bFrescor'), bl.dadosEm, bl.doCache, bl.carregando); if (emBacklog()) semVivo(bl.doCache || bl.offline); };
+const mostrarFrescor = () => { if (!emBacklog()) semVivo(state.doCache || state.offline); };
+const blFrescor = () => { if (emBacklog()) semVivo(bl.doCache || bl.offline); };
 
-/* ----- alertas dentro do painel (Etapa 16): sem push e sem PWA, só com a página aberta ----- */
-function alertaSync() {
-  const box = $('alertaSync'); if (!box) return;
-  let ms = null;
-  if (emBacklog()) ms = bl.dados && bl.dados.abertosAtualizadoMs;
-  else if (state.dados && state.periodo === 'hoje') ms = state.dados.hojeAtualizadoMs;
-  const idade = ms ? (Date.now() - Number(ms)) / 60000 : null;
-  if (idade == null || isNaN(idade) || idade <= 60) { box.hidden = true; box.textContent = ''; document.body.classList.remove('com-alerta'); return; }
-  box.textContent = 'Dados sem atualizar há ' + fmtIdade(idade) + '. Avise o responsável pela planilha';
-  box.hidden = false; document.body.classList.add('com-alerta');
-}
+/* ----- alertas dentro do painel (Etapa 16) ----- */
 function tituloAba() {
   const n = bl.dados ? bl.itens.filter(vence4).length : 0;
   document.title = (n ? '(' + n + ') ' : '') + (emBacklog() ? 'Backlog' : 'Produção Parcial');
@@ -450,22 +464,8 @@ function listaVisivel() {
   return l;
 }
 
-/* ----- medalhas (Etapa 11): 1º, 2º e 3º com mais concluídos na lista visível; empate recebe a mesma medalha ----- */
-function medalhas(lista) {
-  const r = new Map();
-  if (lista.length < 3) return r;
-  const top = Math.max.apply(null, lista.map(t => t.concl));
-  if (top < 1) return r;
-  lista.forEach(t => {
-    if (!(t.concl >= 1)) return;
-    const pos = 1 + lista.filter(o => o.concl > t.concl).length;     // 1 + quantos têm mais
-    if (pos <= 3) r.set(t, pos);
-  });
-  return r;
-}
 const NIVEL_EXT = { atencao: 'atenção', obs: 'observação', normal: 'normal', acima: 'acima da meta' };
 const NIVEL_SIM = { atencao: '▼', obs: '●', normal: '✔', acima: '▲' };
-const MEDALHA_N = { 1: 'Ouro (1º lugar)', 2: 'Prata (2º lugar)', 3: 'Bronze (3º lugar)' };
 const fmtN2 = n => (Math.round(n * 100) / 100).toString().replace('.', ',');
 
 /* linha de cabeçalho da equipe (ordenação por supervisor): técnicos ativos, concluídos, meta e Gap do grupo (mesma conta do Gap geral) */
@@ -683,7 +683,7 @@ function render() {
 
   mostrarModo();
   mostrarFrescor();
-  alertaSync(); tituloAba();
+  tituloAba();
 
   if (d.baseVazia) aviso('A aba Encerramentos ainda não tem dados. Importe o relatório de encerrados.', 'info');
   else aviso('');
@@ -699,7 +699,6 @@ function render() {
   // linhas de equipe só na ordenação por supervisor (a padrão); recolher não altera os KPIs, que somam a lista inteira
   const agrupar = state.ordem === 'sup' && lista.length > 0;
   const temMetaL = lista.some(t => t.metaPer !== undefined);
-  const medal = medalhas(lista);
   let grpAtual = null;
   lista.forEach(t => {
     if (agrupar) {
@@ -728,7 +727,6 @@ function render() {
     const n = el('div', 'nome'); n.setAttribute('role', 'cell');
     const nb = el('button', 'tec-btn'); nb.type = 'button'; nb.setAttribute('aria-label', 'Abrir detalhes de ' + tc(t.nome));
     nb.addEventListener('click', e => { e.stopPropagation(); abrirTecnico(t, nb); });
-    if (medal.has(t)) { const m = el('span', 'medal m' + medal.get(t), String(medal.get(t))); m.title = MEDALHA_N[medal.get(t)]; m.setAttribute('role', 'img'); m.setAttribute('aria-label', MEDALHA_N[medal.get(t)]); nb.appendChild(m); }
     nb.appendChild(document.createTextNode(tc(t.nome)));
     n.appendChild(nb);
     if (t.escTipo) {                              // filtro de escala: distingue ESCALA de EXTRA
@@ -1395,12 +1393,13 @@ $('maisBtn').onclick = () => {
 $('refBtn').onclick = () => carregar();
 
 /* ----- login (usuário + senha) ----- */
-let lembrar = false;   // botão "Salvar credenciais"
-function loginMsg(msg, tipo) { const m = $('lgMsg'); m.className = 'lg-msg' + (tipo ? ' ' + tipo : ''); m.textContent = msg || ''; }
+let lembrar = false;   // botão "Salvar" e caixa "Manter conectado"
+function loginMsg(msg, tipo) { const m = $('lgMsg'); m.className = 'ln-msg' + (tipo ? ' ' + tipo : ''); m.textContent = msg || ''; }
 function loginAtualizar() {
   const b = $('lgSave');
   b.classList.toggle('on', lembrar); b.setAttribute('aria-pressed', String(lembrar));
   b.querySelector('use').setAttribute('href', lembrar ? '#i-check' : '#i-save');
+  $('lgKeep').checked = lembrar;
   $('lgBtn').disabled = !($('lgUser').value.trim() && $('lgPass').value);
 }
 function loginPreencher() {
@@ -1410,6 +1409,18 @@ function loginPreencher() {
   loginAtualizar();
 }
 ['lgUser', 'lgPass'].forEach(id => $(id).addEventListener('input', loginAtualizar));
+$('lgKeep').onchange = () => {                    // "Manter conectado" faz o mesmo que o botão Salvar
+  if ($('lgKeep').checked) {
+    lembrar = true;
+    const login = $('lgUser').value.trim(), senha = $('lgPass').value;
+    if (login && senha) { store.set(K.cred, { login, senha }); store.set(K.auto, true); loginMsg('Credenciais salvas neste aparelho.', 'ok'); }
+  } else { lembrar = false; store.del(K.cred); loginMsg('Credenciais removidas deste aparelho.'); }
+  loginAtualizar();
+};
+$('lgForgot').onclick = () => {                  // senha ou usuário: só o supervisor responsável redefine
+  const h = $('lgHelp'), abrir = h.hidden;
+  h.hidden = !abrir; $('lgForgot').setAttribute('aria-expanded', String(abrir));
+};
 $('lgEye').onclick = () => {
   const p = $('lgPass'), ver = p.type === 'password';
   p.type = ver ? 'text' : 'password';
@@ -1475,6 +1486,7 @@ function sair(msg) {
   window.scrollTo(0, 0);
 }
 $('sairBtn').onclick = () => sair();
+$('bSairBtn').onclick = () => sair();
 
 
 /* ============ ACESSOS: quem está logado (supervisor e coordenador) e batimento de presença ============ */
@@ -1524,6 +1536,7 @@ $('acessBtn').onclick = () => {
   abrirDlg($('dlgAcess')); acCarregar();
   clearInterval(ac.timer); ac.timer = setInterval(() => { if ($('dlgAcess').open) acCarregar(); else clearInterval(ac.timer); }, 30000);
 };
+$('bAcessBtn').onclick = () => $('acessBtn').click();
 $('acFechar').onclick = () => $('dlgAcess').close();
 
 /* ============ BACKLOG (aba Base_Abertos) ============ */
@@ -1722,11 +1735,11 @@ function blRender() {
   $('bSub').textContent = ehTec()
     ? 'Agendadas para você' + (bl.emp === 'GERAL' ? '' : ' · ' + empNome(bl.emp)) + ' · ' + totEmp + ' OS'
     : (bl.emp === 'GERAL' ? 'Todas as empresas' : empNome(bl.emp)) + (bl.f.sup ? ' · ' + supResumo(bl.f.sup, blSupervisores()) : '') + ' · ' + totEmp + ' OS abertas';
-  $('bFiltBtn').classList.toggle('on', !!bl.f.sup);
+  $('bFiltBtn').classList.toggle('on', !!bl.f.sup); $('bMenuBtn').classList.toggle('on', !!bl.f.sup);
   blSalvar();
   blEmps(); blKpis(); blPrio(); blChips(); blStrip();
   blTipo(); blStatus(); blAging(); blCidades(); blTecnicos(); blMatriz(); blLista(); blModo();
-  alertaSync(); tituloAba(); botaoNotif(); notificarVencimentos();
+  tituloAba(); botaoNotif(); notificarVencimentos();
   $('bOrdem').value = bl.ordem;
 }
 
@@ -2389,7 +2402,7 @@ function fecharBacklog() {
 $('blkBtn').onclick = abrirBacklog;
 $('bHome').onclick = fecharBacklog;
 
-setInterval(() => { bl.now = Date.now(); if (state.dados && !emBacklog()) { mostrarModo(); mostrarFrescor(); } if (bl.dados && emBacklog()) { blModo(); blFrescor(); } alertaSync(); tituloAba(); if (bl.dados) notificarVencimentos(); }, 30000);
+setInterval(() => { bl.now = Date.now(); if (state.dados && !emBacklog()) { mostrarModo(); mostrarFrescor(); } if (bl.dados && emBacklog()) { blModo(); blFrescor(); } tituloAba(); if (bl.dados) notificarVencimentos(); }, 30000);
 
 /* ----- atualização automática ----- */
 setInterval(() => {

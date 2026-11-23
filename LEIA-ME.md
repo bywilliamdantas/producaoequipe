@@ -116,3 +116,11 @@ Testado com simulador (dados fictícios + os pedidos reais da planilha) e navega
 - Cada chamada autenticada grava o horário (PropertiesService, no máximo 1 vez por 45 s). A tela aberta e visível avisa a cada 90 s. **Online** = atividade nos últimos 4 minutos. "Sair" marca offline na hora; fechar a aba só cai para offline em até 4 min.
 - Aparecem só técnicos e controladores **ativos e com login e senha**.
 - Na primeira publicação todos aparecem como "Nunca acessou" até entrarem.
+
+---
+
+# Novidades (menu, login e limpeza)
+- **Ranking removido:** sumiram as medalhas 1º/2º/3º ao lado do nome do técnico.
+- **Faixa vermelha "Dados sem atualizar há..." e chip "Dados de HH:MM, atualizando..." removidos** (Produção e Backlog).
+- **Menu de 3 barrinhas** no canto superior direito, igual na Produção e no Backlog, mesma cor e ordem: Atualizar dados, Quem está logado (supervisor/coordenador), Modo TV, Tema, [Filtrar por supervisor, só no Backlog], Backlog ou Produção, Sair. No celular, Backlog/Produção ficam só na barra inferior (como antes).
+- **Login repaginado** conforme o modelo: duas colunas no desktop, uma coluna no celular. Campos sem texto interno; "Manter conectado" (igual ao botão Salvar); "Esqueceu sua senha?" orienta procurar o supervisor responsável para redefinir senha ou usuário.
