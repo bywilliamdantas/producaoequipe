@@ -2752,35 +2752,7 @@ body.m-desk #dlgAcess { width: min(640px,calc(100% - 48px)) }
     #050d1f;
 }
 .sem-login #login { display: flex }
-.ln-shell {
-  margin: auto;
-  width: 100%;
-  max-width: 1120px;
-  display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(0,460px);
-  gap: clamp(24px,5vw,80px);
-  align-items: center;
-}
-.ln-brand { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0 }
-.ln-app {
-  width: 88px; height: 88px; display: grid; place-items: center;
-  border-radius: 26px; border: 1.5px solid #2f7bff;
-  background: linear-gradient(160deg,#0b1e4a,#07122e);
-  box-shadow: 0 0 28px rgba(47,123,255,.55);
-}
-.ln-app svg { width: 52px; height: 52px }
-.ln-brand h1 { margin: 20px 0 0; font-size: clamp(2.3rem,5.4vw,3.7rem); font-weight: 700; line-height: 1.04; color: #fff; letter-spacing: -.01em }
-.ln-brand h1 em { display: block; font-style: italic; color: #ff9a1f }
-.ln-aviso { margin: 16px 0 0; max-width: 30ch; font-size: clamp(.98rem,1.5vw,1.18rem); line-height: 1.4; color: #cfdcf7 }
-.ln-aviso b { color: #ff9a1f; font-weight: 700 }
-.ln-art { width: min(100%,400px); margin: 22px 0 6px }
-.ln-art svg { display: block; width: 100%; height: auto; overflow: visible }
-.ln-feats { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3,1fr); width: min(100%,420px) }
-.ln-feats li { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 2px 10px; font-size: .88rem; line-height: 1.25; color: #dbe6ff }
-.ln-feats li + li { border-left: 1.5px solid rgba(80,140,255,.55) }
-.ln-feats .i { width: 30px; height: 30px; color: #4aa3ff }
-.ln-copy { margin: 26px 0 0; font-size: .9rem; color: #9db2dc }
-
+.ln-shell { margin: auto; width: 100%; max-width: 460px }
 .ln-card {
   width: 100%;
   padding: 32px clamp(18px,4vw,34px) 22px;
@@ -2794,9 +2766,9 @@ body.m-desk #dlgAcess { width: min(640px,calc(100% - 48px)) }
   animation: sobe .35s ease-out;
 }
 .ln-logo {
-  width: 84px; height: 84px; margin: 0 auto 14px; display: grid; place-items: center;
-  border-radius: 50%; border: 2px solid transparent;
-  background: radial-gradient(circle at 50% 40%,#0d2a66,#06122e) padding-box, linear-gradient(150deg,#2f7bff,#ff9a1f) border-box;
+  width: 84px; height: 84px; margin: 0 auto 16px; display: grid; place-items: center;
+  border-radius: 22%; border: 2px solid transparent;
+  background: linear-gradient(160deg,#0d2a66,#06122e) padding-box, linear-gradient(150deg,#2f7bff,#ff9a1f) border-box;
   box-shadow: 0 0 26px rgba(47,123,255,.5);
 }
 .ln-logo svg { width: 44px; height: 44px }
@@ -2860,24 +2832,10 @@ body.m-desk #dlgAcess { width: min(640px,calc(100% - 48px)) }
 .ln-msg { min-height: 1.2em; margin: 12px 0 0; font-size: .88rem; line-height: 1.35; color: #b9c9ec }
 .ln-msg.erro { color: #ff8a93 }
 .ln-msg.ok { color: #6fe3a6 }
-.ln-or { display: flex; align-items: center; gap: 14px; margin: 10px 0 0; font-size: .9rem; color: #9db2dc }
-.ln-or::before, .ln-or::after { content: ""; flex: 1; height: 1px; background: rgba(80,140,255,.4) }
-.ln-foot { margin-top: 14px; font-size: .9rem; color: #b9c9ec }
+.ln-foot { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(80,140,255,.4); font-size: .9rem; color: #b9c9ec }
 
 @media (hover: hover) { .ln-btn:hover:not(:disabled) { filter: brightness(1.12) } }
 
-/* celular e tablet em pé: uma coluna, só o essencial da marca */
-@media (max-width: 900px) {
-  .ln-shell { grid-template-columns: minmax(0,1fr); max-width: 480px; gap: 22px }
-  .ln-art, .ln-feats, .ln-copy { display: none }
-  .ln-app { width: 68px; height: 68px; border-radius: 20px }
-  .ln-app svg { width: 40px; height: 40px }
-  .ln-brand h1 { margin-top: 14px; font-size: clamp(2rem,9vw,2.7rem) }
-  .ln-brand h1 em { display: inline }
-  .ln-aviso { margin-top: 10px; font-size: .95rem; max-width: 34ch }
-}
-/* telas largas e baixas (notebook pequeno, celular deitado): sem a ilustração */
-@media (min-width: 901px) and (max-height: 720px) { .ln-art { display: none } }
 @media (max-width: 360px) {
   .ln-card { padding: 24px 14px 18px; border-radius: 24px }
   .ln-field { gap: 10px; padding-left: 14px; min-height: 64px }
