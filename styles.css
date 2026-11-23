@@ -2827,8 +2827,6 @@ body.m-desk #dlgAcess { width: min(640px,calc(100% - 48px)) }
 .ln-btn .i { width: 24px; height: 24px }
 .ln-btn:active { transform: scale(.98) }
 .ln-btn:disabled { cursor: not-allowed; opacity: .55; box-shadow: none }
-.ln-btn.sv { margin-top: 12px; height: 54px; font-size: 1.05rem; border-color: #2f7bff; background: rgba(10,26,66,.6); box-shadow: none }
-.ln-btn.sv.on { box-shadow: 0 0 0 2px rgba(47,123,255,.5), 0 0 22px rgba(47,123,255,.5) }
 .ln-msg { min-height: 1.2em; margin: 12px 0 0; font-size: .88rem; line-height: 1.35; color: #b9c9ec }
 .ln-msg.erro { color: #ff8a93 }
 .ln-msg.ok { color: #6fe3a6 }

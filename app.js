@@ -1368,12 +1368,9 @@ $('maisBtn').onclick = () => {
 $('refBtn').onclick = () => carregar();
 
 /* ----- login (usuário + senha) ----- */
-let lembrar = false;   // botão "Salvar" e caixa "Manter conectado"
+let lembrar = false;   // caixa "Manter conectado"
 function loginMsg(msg, tipo) { const m = $('lgMsg'); m.className = 'ln-msg' + (tipo ? ' ' + tipo : ''); m.textContent = msg || ''; }
 function loginAtualizar() {
-  const b = $('lgSave');
-  b.classList.toggle('on', lembrar); b.setAttribute('aria-pressed', String(lembrar));
-  b.querySelector('use').setAttribute('href', lembrar ? '#i-check' : '#i-save');
   $('lgKeep').checked = lembrar;
   $('lgBtn').disabled = !($('lgUser').value.trim() && $('lgPass').value);
 }
@@ -1384,7 +1381,7 @@ function loginPreencher() {
   loginAtualizar();
 }
 ['lgUser', 'lgPass'].forEach(id => $(id).addEventListener('input', loginAtualizar));
-$('lgKeep').onchange = () => {                    // "Manter conectado" faz o mesmo que o botão Salvar
+$('lgKeep').onchange = () => {                    // "Manter conectado": guarda login e senha neste aparelho
   if ($('lgKeep').checked) {
     lembrar = true;
     const login = $('lgUser').value.trim(), senha = $('lgPass').value;
@@ -1402,17 +1399,6 @@ $('lgEye').onclick = () => {
   $('lgEye').classList.toggle('on', ver);
   $('lgEye').querySelector('use').setAttribute('href', ver ? '#i-eyeoff' : '#i-eye');
   $('lgEye').setAttribute('aria-label', ver ? 'Ocultar senha' : 'Mostrar senha');
-};
-$('lgSave').onclick = () => {
-  if (lembrar) {
-    lembrar = false; store.del(K.cred); loginAtualizar();
-    loginMsg('Credenciais removidas deste aparelho.');
-    return;
-  }
-  const login = $('lgUser').value.trim(), senha = $('lgPass').value;
-  if (!login || !senha) { loginMsg('Preencha login e senha para salvar.', 'erro'); return; }
-  lembrar = true; store.set(K.cred, { login, senha }); store.set(K.auto, true); loginAtualizar();
-  loginMsg('Credenciais salvas neste aparelho.', 'ok');
 };
 function entrar(cred, usuario) {
   state.cred = cred;
