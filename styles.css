@@ -2340,29 +2340,9 @@ body.m-desk #dlgCH { width: min(760px,calc(100% - 48px)) }
 .grp-i .neg b { color: var(--bad) }
 
 /* comparativo (Etapa 13) */
-.kcmp {
-  appearance: none;
-  background: var(--cor-bgf-25);
-  border: 0;
-  border-radius: 99px;
-  margin: 3px 0 0;
-  padding: 2px 6px;
-  font: inherit;
-  font-size: .56rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--cor-txf-1);
-  cursor: pointer;
-  max-width: 100%;
-  white-space: normal;
-  text-align: center;
-}
 
-.kcmp.up { color: var(--cor-txf-10) }
 
-.kcmp.down { color: var(--cor-txf-11) }
 
-.kcmp:focus-visible { outline: 2px solid var(--cor-bd-24); outline-offset: 1px }
 
 /* gráfico de evolução (Etapa 12) */
 .gr { margin: 14px 0 6px }
@@ -2510,15 +2490,15 @@ mark.hl { background: var(--cor-bg-77); color: inherit; border-radius: 3px; padd
 
 /* alvos de toque de pelo menos 44 px nos botões pequenos do celular */
 @media (pointer: coarse), (max-width: 520px) {
-    .icon-btn, .filter-btn, .chp, .fbtn, .bmore, .btn, .cal-tab, .cal-q, .cal-n, .cal-d, .cal-m, .mopt, .oact, .grp-btn, .kcmp, .fchip, .more, #bMais {
+    .icon-btn, .filter-btn, .chp, .fbtn, .bmore, .btn, .cal-tab, .cal-q, .cal-n, .cal-d, .cal-m, .mopt, .ln-eye, .oact, .grp-btn, .fchip, .more, #bMais {
     min-height: 44px;
   }
 
-    .icon-btn, .cal-n { min-width: 44px }
+    .icon-btn, .ln-eye, .cal-n { min-width: 44px }
 
     .pl-btn { min-width: 44px; min-height: 44px }
 
-    .kcmp { min-height: 32px }}
+    }
 
 /* só pulsa o que está ao vivo */
 body.sem-vivo .modo .dot, body.sem-vivo .pl-btn.play { animation: none !important }
@@ -2568,13 +2548,10 @@ body.tv { overflow-x: hidden; }
   .tec-btn { display: inline-flex; align-items: center; min-height: 44px; }
   .c.clk, .c-btn { min-height: 44px; }
   .mx td button { min-height: 44px; }
-  .kcmp { position: relative; }
-  .kcmp::after { content: ""; position: absolute; inset: -8px -6px; }}
+    }
 
 /* contraste final (Etapa 17/18): ajustes finos dos dois temas */
 .bnav button.on { color: #9cc0ff; }
-.kcmp { background: rgba(0,0,0,.45); }
-.kcmp.up, .kcmp.down { color: #fff; }
 :root[data-theme="light"] {
   --ok: #075c31; --warn: #8a4a00; --bad: #b01c1c;
 }

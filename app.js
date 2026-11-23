@@ -57,7 +57,6 @@ const state = Object.assign(
 state.busca = '';
 state.dir = state.dir === 'asc' || state.dir === 'desc' ? state.dir : '';   // sentido da ordenação pelo cabeçalho ('' = o padrão da coluna)
 state.grpFechado = new Set();       // equipes recolhidas na tabela (só na tela)
-state.cmpModo = 'ontem';            // comparativo do KPI Concluídos: 'ontem' | 'sem'
 state.codigo = store.get(K.codigo, '');
 /* credenciais da sessão: sessionStorage (vale até fechar a aba) ou, se "Salvar credenciais" estiver ativo, o aparelho lembra e entra direto */
 function lerCredenciais() {
@@ -786,7 +785,6 @@ function render() {
 
   $('filtroBtn').classList.toggle('on', state.periodo !== 'hoje' || !mesmoSet(state.sups, supsPadrao()) || state.ordem !== 'sup');
   pintarCabecalho();
-  comparativoKpi(lista);
 }
 
 // quantas metas (0 a 4) o técnico alcançou, pela média por dia produzido (mesma conta do servidor)
@@ -1010,30 +1008,7 @@ function desenharDetalhes(lista, s, nAtivos, temMeta, meta, fmtN, diario) {
   }
 }
 
-/* ----- comparativo no KPI Concluídos e projeção do dia (Etapa 13) ----- */
-function comparativoKpi(lista) {
-  const b = $('kCmp'), d = state.dados;
-  const cmp = d && d.comparativo;
-  if (!cmp || (state.periodo !== 'hoje' && state.periodo !== 'ontem')) { b.hidden = true; return; }
-  // soma dos técnicos visíveis (respeita busca e equipes); sem os campos por técnico, usa o total do servidor
-  const porTec = lista.length && lista.every(t => t.cmpOntem !== undefined);
-  const refAnt = porTec ? lista.reduce((s, t) => s + t.cmpOntem, 0) : cmp.ontem;
-  const refSem = porTec ? lista.reduce((s, t) => s + t.cmpSemana, 0) : cmp.mesmoDiaSemanaPassada;
-  const sem = state.cmpModo === 'sem', ref = sem ? refSem : refAnt;
-  const rot = sem ? 'vs sem. passada' : (cmp.base === 'ontem' ? 'vs dia anterior' : 'vs ontem');
-  const atual = lista.reduce((s, t) => s + t.concl, 0);
-  b.hidden = false;
-  b.className = 'kcmp';
-  if (!ref) { b.textContent = 'sem base ' + rot.replace('vs ', 'p/ '); b.classList.add('neutro'); }
-  else {
-    const p = Math.round((atual - ref) / ref * 100);
-    b.textContent = (p > 0 ? '▲ +' : p < 0 ? '▼ ' : '= ') + p + '% ' + rot;
-    b.classList.add(p > 0 ? 'up' : p < 0 ? 'down' : 'neutro');
-  }
-  b.title = 'Comparando ' + atual + ' concluídos com ' + ref + ' (' + rot.replace('vs ', '') + '). Toque para alternar.';
-  b.setAttribute('aria-label', b.textContent + '. Toque para alternar a comparação.');
-  b.onclick = () => { state.cmpModo = sem ? 'ontem' : 'sem'; comparativoKpi(lista); };
-}
+/* ----- projeção do dia (Etapa 13) ----- */
 // projeção do dia por ritmo linear = concluídos / fração do expediente já passada. Só no filtro Hoje, depois de 1 hora de expediente e antes do fim.
 function fracExpediente() {
   const d = state.dados;
